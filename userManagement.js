@@ -88,7 +88,9 @@ app.post("/verify", async (req, res) => {
 // if a token expires make the user have to login again.
 
 function generateToken() {
-    // this function will generate a token and add it to a file that will be read everytime a user logs in
+    // this function will generate a token and add it to a file that will be read everytime a user logs 
+    
+    
     }
     
     function checkToken(token) {
