@@ -1,8 +1,0 @@
-
-5/0/2023 9:56:57 LOG LEVEL: WARN| Logging Enabled! Logging to server.log
-5/0/2023 9:56:57 LOG LEVEL: INFO| The server is starting
-5/0/2023 9:56:57 LOG LEVEL: INFO| The server is ready
-5/0/2023 9:56:57 LOG LEVEL: INFO| The server is listening on port 3000
-5/0/2023 9:56:57 LOG LEVEL: INFO| Database Exists!
-5/0/2023 9:56:57 LOG LEVEL: INFO| Table userAccounts Exists!
-5/0/2023 9:56:57 LOG LEVEL: INFO| Table userData Exists!
