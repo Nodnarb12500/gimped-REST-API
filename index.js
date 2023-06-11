@@ -1,20 +1,30 @@
+// imported node stuff
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
+const crypto = require("crypto")
 const bcrypt = require("bcrypt");
+const fs = require("node:fs");
+const readline = require("node:readline");
+
+// imported files
 const db = require("./db/database");
 const config = require("./config");
 const logging = require("./logging");
+const { match } = require("assert");
 
 logging.logging("The server is starting", "INFO");
-// CREATE TABLE
+
+// Create tables if they dont already exist
 db.checkTable("userAccounts");
 db.checkTable("userData");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.set('trust proxy', true); // needed for obtaining user IPs for logging even behind a proxy
+ // needed for obtaining user IPs for logging even behind a proxy
+ // apperently unsafe(easily manipulated), make a config value for this to disable easily?
+app.set('trust proxy', true);
 
 
 /* Web Pages */ // If i knew how to put this in another File I would.
@@ -155,14 +165,20 @@ app.post("/verify", async (req, res) => {
   verifyUser(req.body.password, userCreds[0].password);
 
   function verifyUser(password, hash) {
-    bcrypt.compare(password, hash, (err, result) => {
+    bcrypt.compare(password, hash, async (err, result) => {
       if (err) {
         logging.logging("Something Broke: " + err, "ERROR");
         res.status(200).send("A server side error has occurred")
       }
       if (result) {
-        logging.logging("User logged in" + userCreds.username, "DEBUG");
-        res.status(200).send("Success!");
+        logging.logging("User logged in " + userCreds[0].username, "DEBUG");
+
+        let verKey = await generateToken(userCreds[0].username);
+
+        console.log(verKey);
+
+        res.status(200).json({verKey});
+        // res.status(200).send("Success!"); // send the verKey back as JSON
 
         /*
         send back some verification code thing that the user can use
@@ -174,7 +190,8 @@ app.post("/verify", async (req, res) => {
 
       } else {
         logging.logging("Incorect Username/Password", "WARN"); // somehow also get the req.ip here so we can learn of more bots
-        res.status(200).send("Incorect Username/Password");
+        
+        res.status(200).json("Incorect Username/Password"); // Send Errors back as JSON
       }
     });
   }
@@ -184,34 +201,95 @@ app.post("/verify", async (req, res) => {
 // load/make if doesnt exist file with verification tokens strored next to when they expire.
 // if a token expires make the user have to login again.
 
-function generateToken(user) {
+app.get('/api/tokentest/:user/:token', async (req, res) => {
+  const result = await checkToken(req.params.user, req.params.token);
+
+  res.status(200).send(result); // tell the user in JSON that the token is valid or invaild
+});
+
+async function generateToken(user) {
   let token
   // this function will generate a token and add it to a file that will be read everytime a user logs in
 
 
+  crypto.randomBytes(48, (err, buf) => {
+    if (err) logging.logging(err, "ERROR");
 
-  result = {
-    username: user,
-    verKey: token
-  }
+    var token = buf.toString('hex');
 
-  // write the result to a file. tokens.js?
+    let date = "now";
+
+    result = {
+      username: user,
+      verKey: token,
+      createDate: date
+    }
+    
+    // console.log(result);
+
+    // write the result to a file. tokens.js?
+    var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
+    tokenStream.write(JSON.stringify(result) + "\n");
+    tokenStream.end();
+    
+    console.log(token)
+    return token;
+
+  });
 
 }
 
-function checkToken(user, token) {
 
-  // read tokens.js line by line and parse to json. push lines to an array
-  // call back the tokens with token[0].verKey == token to compare the tokens
+async function checkToken(user, token) {
+  const fileStream = fs.createReadStream("./tokens.json");
+  const rl = readline.createInterface({
+    input : fileStream,
+    crlfDelay: Infinity,
+  });
+  
+  var userAuth, match;
+
+  for await (const line of rl) {
+    // console.log("Line from File: " + line);
+
+    // do token comparisions here
+
+    match = JSON.parse(line).verKey == token;
+    console.log(match)
+    if (match === true) {
+     userAuth = JSON.parse(line);
+     break;
+    }
+    // if (match === true) return match;
+
+  }
+  if (match === true) {
+    // if the token exists is it the correct user trying to use it.
+    if (userAuth.username === user) {
+
+    } else {
+      logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
+      match = false;
+    }
+
+  } else {
+    logging.logging(user + " Used invalid key", "WARN");
+    match = false; // redundent?
+  }
+
+  return match;
+/*
+  read tokens.js line by line and parse to json. push lines to an array
+  call back the tokens with token[0].verKey == token to compare the tokens
 
 
-  // attempt to use only the token to auth the user.
+  attempt to use only the token to auth the user. // username + token is required
 
-  // this function is for users that are attempting to use the API
-  // this validates the token the user is creating by making sure the token both exists in the tokens file
-  // and is not expired. if tokens are expired this function should also remove it or call another function to remove it
-  // The tokens file must either be reread everytime a token is checked, OR and possibly peferibly stored in an array on server startup
-
+  this function is for users that are attempting to use the API
+  this validates the token the user is creating by making sure the token both exists in the tokens file
+  AND is not expired. if tokens are expired this function should also remove it or call another function to remove it
+  The tokens file must either be reread everytime a token is checked, OR and possibly peferibly stored in an array on server startup
+*/
 
 }
 
