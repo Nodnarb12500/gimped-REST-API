@@ -1,14 +1,14 @@
 {
-  "name": "rest-api_template",
+  "name": "gimped-rest-api",
   "version": "1.0.0",
-  "description": "REST-Template",
+  "description": "REST-API Template",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://git.nodnarb12500.tk/nodnarb12500/REST-API_Template"
+    "url": "https://github.com/nodnarb12500/gimped-REST-API"
   },
   "keywords": [
     "nodejs",
