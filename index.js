@@ -28,8 +28,8 @@ app.set('trust proxy', true);
 
 
 /* Web Pages */ // If i knew how to put this in another File I would.
-app.use("/resources", express.static("resources"));
-app.set("/resources", express.static("resources"));
+app.use("/resources", express.static("./website/resources"));
+app.set("/resources", express.static("./website/resources"));
 
 app.get("/", (req, res) => {
   res.sendFile('website/html/index.html', {root: __dirname});
@@ -267,6 +267,8 @@ async function checkToken(user, token) {
     // if the token exists is it the correct user trying to use it.
     if (userAuth.username === user) {
 
+    } else if (userAuth) {
+      
     } else {
       logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
       match = false;
