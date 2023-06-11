@@ -1,16 +1,16 @@
 /* HTML Tags */
 body {
     color: black; /* useless, to silence warnings */
-   }
+}
    
-   /* IDs */
-   #formBox { /* This should be in a css file specific or inside the signup.html file */
-       color: black; /* useless, to silence warnings */
-   }
+/* IDs */
+#formBox {
+    color: black; /* useless, to silence warnings */
+}
    
-   /* Classes */
-   .center {
-       text-align: center;
-       justify-content: center;
-       margin: auto;
-   }
+/* Classes */
+.center {
+    text-align: center;
+    justify-content: center;
+    margin: auto;
+}
