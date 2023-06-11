@@ -133,3 +133,4 @@ dist
 # Custom Ignores
 package-lock.json
 db/*.sqlite3
+tokens.json
