@@ -9,7 +9,7 @@ This is a template ive been working on for a while. its not really a REST API be
         - knex
         - sqlite3
 
-# installation
+# Installation
 ```
 git clone https://github.com/Nodnarb12500/gimped-REST-API
 cd gimped-REST-API
