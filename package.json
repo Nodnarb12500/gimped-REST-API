@@ -1,0 +1,26 @@
+{
+  "name": "rest-api_template",
+  "version": "1.0.0",
+  "description": "REST-Template",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.nodnarb12500.tk/nodnarb12500/REST-API_Template"
+  },
+  "keywords": [
+    "nodejs",
+    "website"
+  ],
+  "author": "Nodnarb12500",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "knex": "^2.3.0",
+    "sqlite3": "^5.1.2"
+  }
+}
