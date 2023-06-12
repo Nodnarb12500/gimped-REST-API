@@ -13,6 +13,9 @@ const listenAddress = "192.168.1.145";
 // what port do you want to server to run on.
 const listenPort = 3000;
 
+// If your not behind a proxy you trust set this to false. default is true because thats how I use it
+const trustProxy = true;
+
 // Currently this file is relative to index.js
 const databaseFile = "db/demo.sqlite3";
 
@@ -46,6 +49,7 @@ const log2console = true;
 module.exports = {
     listenAddress,
     listenPort,
+    trustProxy,
     databaseFile,
     signUpAllowed,
     expireTime,
