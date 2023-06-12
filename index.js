@@ -11,7 +11,6 @@ const readline = require("node:readline");
 const db = require("./db/database");
 const config = require("./config");
 const logging = require("./logging");
-const { match } = require("assert");
 
 logging.logging("The server is starting", "INFO");
 
@@ -23,8 +22,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
  // needed for obtaining user IPs for logging even behind a proxy
- // apperently unsafe(easily manipulated), make a config value for this to disable easily?
-app.set('trust proxy', true);
+ // apperently unsafe(easily manipulated)
+app.set('trust proxy', config.trustProxy);
 
 
 /* Web Pages */ // If i knew how to put this in another File I would.
@@ -71,28 +70,72 @@ app.post("/api/create", async (req, res) => {
     logging.logging(req.ip + "relevent thing", "API");
     */
   
-    const results = await db.createRow(req.body);
-    res.status(201).json({id: results[0]});
+    const validated = checkToken(req.body.user, req.body.verKey);
+
+    if (validated) {
+      const results = await db.createRow(req.body);
+      res.status(201).json({id: results[0]});
+
+    } else {
+      // invalid token
+      res.status(403).json({"verKey": "Invalid Token"});
+    }
+
+    
 });
   
-app.post("/api/modify/:id", async (req, res) => {
+app.post("/api/modify", async (req, res) => {
     /* Get id and send back the JSON */
-    const results = await db.modifyRow(req.params.id, req.body);
-    res.status(200).json({results});
+    const validated = checkToken(req.body.user, req.body.verKey);
+
+    if (validated) {
+      const results = await db.modifyRow(req.params.id, req.body);
+      res.status(200).json({results});
+      
+    } else {
+      // invalid token
+      res.status(403).json({"verKey": "Invalid Token"});
+    }
+
+
+
   
 });
   
   /* You might want to leave this commented out */
-app.get("/api/rm/:id", async (req, res) => {
+app.post("/api/rm", async (req, res) => {
     // mark stuff for delete and hide instead?
-    await db.deleteRow(req.params.id);
-    res.status(200).json({success: true});
+
+    const validated = checkToken(req.body.user, req.body.verKey);
+
+    if (validated) {
+      await db.deleteRow(req.params.id);
+      res.status(200).json({success: true});
+
+    } else {
+      // invalid token
+      res.status(403).json({"verKey": "Invalid Token"});
+
+    }
+
+
 });
   
-app.get("/api/get/:id", async (req, res) => {
+app.post("/api/get/:id", async (req, res) => {
     /* Get id and send back the JSON */
-    const results = await db.getRow(req.params.id);
-    res.status(200).json({results});
+
+    const validated = checkToken(req.body.user, req.body.verKey);
+
+    if (validated) {
+      const results = await db.getRow(req.params.id);
+      res.status(200).json({results});
+
+    } else {
+      // invalid token
+      res.status(403).json({"verKey": "Invalid Token"});
+
+    }
+
   
 });
 
@@ -160,38 +203,75 @@ app.post("/verify", async (req, res) => {
   // will this use another table? - that would be best if this is to be stored in the database.
   // this will only be used to check credentials
 
-  const userCreds = await db.getRow(table, req.body.username);
+  if (req.body.username == undefined) {
+    res.status(200).json({"ERROR": "Send as URL encoded!"});
+    // needs to stop execution databases also need some error checking so they stop crashing the server
+  }
 
+  const userCreds = await db.getRow(table, req.body.username);
   verifyUser(req.body.password, userCreds[0].password);
 
   function verifyUser(password, hash) {
     bcrypt.compare(password, hash, async (err, result) => {
       if (err) {
         logging.logging("Something Broke: " + err, "ERROR");
-        res.status(200).send("A server side error has occurred")
-      }
-      if (result) {
+        res.status(200).send({"ERROR":"A server side error has occurred"});
+
+      } else if (result) {
         logging.logging("User logged in " + userCreds[0].username, "DEBUG");
 
-        let verKey = await generateToken(userCreds[0].username);
 
-        console.log(verKey);
 
-        res.status(200).json({verKey});
-        // res.status(200).send("Success!"); // send the verKey back as JSON
+        verKey = await new Promise(async (resolve, reject) => {
+          // I think result is returning a broken promise instead of the value I want.
+          let result = generateToken(userCreds[0].username);
+          console.log("result: " + result);
+          resolve("test: " + result);
+
+        })
+        .then(verKey => {
+          // testing leads me to believe this is redundent and doesnt need to exist
+          console.log(".then verKey: " + verKey);
+          // res.status(200).json({"verKey" : verKey});
+          resolve(verKey);
+
+        })
+        .catch(err => {
+          console.log(err);
+
+        });
+
+
+        // let verKey = new Promise((resolve, reject) => {
+        //   resolve(generateToken(userCreds[0].username));
+        // })
+
+        // let verKey = await generateToken(userCreds[0].username);
+
+        console.log("verKey outside the promise: " + verKey);
+
+
+        // await generateToken(userCreds[0].username)
+        // .then(verKey => {
+        //   console.log(verKey);
+        //   res.status(200).json({"verKey":verKey});
+
+        // })
+        // .catch((err) => {
+        //   console.log(err);
+        // });
 
         /*
         send back some verification code thing that the user can use
         so they they dont have to continuouly logback in with some expiry thing.
         save to a JSON file? username + verKey? verKey is required for API Access?
 
-        verKey should be linked to a username already to so all that should be required is the verification key
         */
 
       } else {
         logging.logging("Incorect Username/Password", "WARN"); // somehow also get the req.ip here so we can learn of more bots
         
-        res.status(200).json("Incorect Username/Password"); // Send Errors back as JSON
+        res.status(200).json({"verKey":"Incorect Username/Password"}); // Send Errors back as JSON
       }
     });
   }
@@ -208,20 +288,20 @@ app.get('/api/tokentest/:user/:token', async (req, res) => {
 });
 
 async function generateToken(user) {
-  let token
   // this function will generate a token and add it to a file that will be read everytime a user logs in
 
+  let verKey;
 
   crypto.randomBytes(48, (err, buf) => {
     if (err) logging.logging(err, "ERROR");
 
-    var token = buf.toString('hex');
+    verKey = buf.toString('hex');
 
     let date = "now";
 
     result = {
       username: user,
-      verKey: token,
+      verKey: verKey,
       createDate: date
     }
     
@@ -231,16 +311,15 @@ async function generateToken(user) {
     var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
     tokenStream.write(JSON.stringify(result) + "\n");
     tokenStream.end();
+
+    console.log(verKey);
     
-    console.log(token)
-    return token;
-
   });
-
+  resolve(verKey);
+  return verKey;
 }
 
-
-async function checkToken(user, token) {
+async function checkToken(user, verKey) {
   const fileStream = fs.createReadStream("./tokens.json");
   const rl = readline.createInterface({
     input : fileStream,
@@ -254,7 +333,7 @@ async function checkToken(user, token) {
 
     // do token comparisions here
 
-    match = JSON.parse(line).verKey == token;
+    match = JSON.parse(line).verKey == verKey;
     console.log(match)
     if (match === true) {
      userAuth = JSON.parse(line);
