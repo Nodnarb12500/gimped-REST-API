@@ -8,7 +8,8 @@ function logConnection(req, loglevel) {
     if (!loglevel) {
         loglevel = "INFO";
     }
-
+    // log the HTTP code to userAgent is questionable if its really needed
+    // http code doesnt seem to be something thats easily obtainable right now
     logging("Connected Client "+ req.ip + " " + req.method + " " + req.path + " " + req.get('User-Agent'), loglevel);
 
     // apache log for reference
@@ -18,7 +19,7 @@ function logConnection(req, loglevel) {
 function logging(message, loglevel) {
     if (loggingReported === false) {
         if (config.loggingEnabled) {
-            let message2log = "\n" + datetime() + " LOG LEVEL: " + "WARN" + "| " + "Logging Enabled! Logging to " + config.logpath;
+            let message2log = "\n" + datetime("logging") + " LOG LEVEL: " + "WARN" + "| " + "Logging Enabled! Logging to " + config.logpath;
 
             console.log(message2log);
 
@@ -41,19 +42,12 @@ function logging(message, loglevel) {
         var message2log = datetime() + " " + "LOG LEVEL: " + loglevel + "| " + message;
 
         if (config.log2console) { 
-            //console.log("LOG LEVEL: " + loglevel + "| " + message);
             console.log(message2log);
-
         }
-        // open a file for writting, write 1 line, then close it
-        var logStream = fs.createWriteStream(config.logpath, {flags: 'a+'});
-        logStream.write(message2log + "\n");
-        logStream.end();
-
-        // logging this way can create some bugs, my log might not be busy now but people on windows might stuggle using this
-        // fs.appendFile(config.logpath, message2log, (err) => {
-        //     if (err) throw err;
-        // });
+        
+        var logStream = fs.createWriteStream(config.logpath, {flags: 'a+'}); // Open the file
+        logStream.write(message2log + "\n"); // write the line
+        logStream.end(); // close the file
 
     } else {
         // dont log
@@ -61,28 +55,33 @@ function logging(message, loglevel) {
 
 }
 
-function datetime() {
-    //date and time down to seconds if thats not something already in nodeJS.
+function datetime(format, tokenExpire) {
+    if (format == undefined) { format = "logging"; }
 
     const d = new Date();
-    let year = d.getFullYear();
-    let month = d.getMonth() + 1;
-    let day = d.getDate();
+    var result;
 
-    var date = d.getMonth() + "/" + d.getDay() + "/" + d.getFullYear();
-    var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    if (format == "logging") {
+        // this is the format I use for logging
+        result = (d.getMonth() + 1) + "/" + d.getDay() + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 
-    var currentDateTime = date + " " + time;
-    // var currentDateTime = d.getTime();
-    return currentDateTime;
+    } else if (format == "token") {
+        result = d.getTime() + config.expireTime;
 
-    // month++; // months start at 0 for soe reason
+    } else if (format == "tokenCheck") {
+        // valid?
+        if (tokenExpire < d.getTime()) { result = false; } 
+        else if (tokenExpire > d.getTime()) { result = true; }
 
-    // let date = month + "/" + day + "/" + year
+    } else { 
+        console.log("Something unexpected happened in logging.js");
+    }
 
+    return result;
 }
 
 module.exports = {
     logging,
-    logConnection
+    logConnection,
+    datetime
 }

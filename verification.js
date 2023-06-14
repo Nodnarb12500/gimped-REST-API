@@ -53,19 +53,22 @@ for await (const line of rl) {
   }
 }
 
-if (match === true) {
+if (match === true && logging.datetime("tokenCheck", userAuth.expireDate)) {
   // if the token exists is it the correct user trying to use it.
   if (userAuth.username === user) {
-  return match;
-  } 
-  // else if (userAuth !== user) {
-  //   logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
-  //   match = false;
-  // } // useless?
-  else {
+    // token isnt invalid OR expired!
+    return match;
 
-  logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
-  match = false;
+  } else if (match === true || logging.datetime("tokenCheck", userAuth.expireDate)) {
+    console.log("token is either invalid or expired!");
+    match = false;
+    return match;
+
+  } else {
+    logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
+
+    match = false;
+
   }
 
 } else {
@@ -73,16 +76,8 @@ if (match === true) {
   match = false; // redundent?
 }
 
+
 return match;
-/*
-attempt to use only the token to auth the user. // username + token is required
-
-this function is for users that are attempting to use the API
-this validates the token the user is using by making sure the token both exists in the tokens file
-AND is not expired. if tokens are expired this function should also remove it or call another function to remove it
-The tokens file must either be reread everytime a token is checked, OR and possibly (and preferably?) stored in an array on server startup // global variable
-*/
-
 }
 
 function stripToken(userReq) {

@@ -115,12 +115,12 @@ app
             if (err) logging.logging(err, "ERROR");
         
             let verKey = buf.toString('hex');
-            let date = "now"; // this needs to use logging.datetime(); to create a date but logging.datetime() should be more universal
+            let date = logging.datetime("token"); // this needs to use logging.datetime(); to create a date but logging.datetime() should be more universal
         
             result = {
               username: req.body.username,
               verKey: verKey,
-              createDate: date
+              expireDate: date
             }
         
             var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
