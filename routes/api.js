@@ -35,7 +35,7 @@ app.post("/create", async (req, res) => {
 
   } else {
     // Invalid token
-    res.status(401).json({"verKey": "Invalid Token"});
+    res.status(401).json({"ERROR": "Invalid Token"});
   }
 
 });
@@ -52,7 +52,7 @@ app.post("/modify", async (req, res) => {
     
   } else {
     // invalid token
-    res.status(401).json({"verKey": "Invalid Token"});
+    res.status(401).json({"ERROR": "Invalid Token"});
   }
 
 });
@@ -73,7 +73,7 @@ app.post("/rm", async (req, res) => {
 
   } else {
     // invalid token
-    res.status(401).json({"verKey": "Invalid Token"});
+    res.status(401).json({"ERROR": "Invalid Token"});
 
   }
 });
@@ -88,18 +88,12 @@ app.post("/get/:id", async (req, res) => {
 
   } else {
     // invalid token
-    res.status(401).json({"verKey": "Invalid Token"});
+    res.status(401).json({"ERROR": "Invalid Token"});
     logging.logging(res.ip + " " + req.body.username + " Used an invalid Token", "INFO");
   }
 });
 
 /* Token Test */
-app.get('/tokentest/:user/:token', async (req, res) => {
-  const result = await verification.checkToken(req.params.user, req.params.token);
-  res.status(200).send(result); // tell the user in JSON that the token is valid or invaild
-
-});
-
 app.post('/tokentest', async (req, res) => {
   const result = await verification.checkToken(req.body.username, req.body.verKey);
   console.log(result);

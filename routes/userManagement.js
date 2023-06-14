@@ -123,11 +123,10 @@ app
               expireDate: date
             }
         
-            var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
+            var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'}); 
             tokenStream.write(JSON.stringify(result) + "\n");
             tokenStream.end();
-        
-            console.log(verKey);
+
             res.status(201).json({"verKey" : verKey});
           });
   
@@ -140,7 +139,7 @@ app
           // somehow also get the req.ip here so we can learn of more bots // this might already "work"
           logging.logging("Incorect Username/Password", "WARN");
           // Send Errors back as JSON
-          res.status(401).json({"verKey":"Incorect Username/Password"});
+          res.status(401).json({"ERROR":"Incorect Username/Password"});
         }
       });
     }
