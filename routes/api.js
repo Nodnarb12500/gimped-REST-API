@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 const verification = require("../verification");
+const db = require("../db/database");
 
 /* API Shit */
 // if verified {
@@ -16,16 +17,25 @@ const verification = require("../verification");
 app.post("/create", async (req, res) => {
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
-  apiRequest = userManagement.stripToken(req.body);
+  apiRequest = verification.stripToken(req.body);
 
 
   if (validated === true) {
-    const results = await db.createRow(table, apiRequest);
-    res.status(201).json({id: results[0]});
+    const exists = await db.getRow(table, apiRequest.username);
+    if (exists) {
+      // either modify the row or tell the user to user the correct URL
+      // also perhaps make the row that would be generated here by default 
+      //  - and users should already be using /modify in this case
+
+    } else {
+      const results = await db.createRow(table, apiRequest);
+      res.status(201).json({id: results[0]});
+    }
+    
 
   } else {
     // Invalid token
-    res.status(403).json({"verKey": "Invalid Token"});
+    res.status(401).json({"verKey": "Invalid Token"});
   }
 
 });
@@ -42,7 +52,7 @@ app.post("/modify", async (req, res) => {
     
   } else {
     // invalid token
-    res.status(403).json({"verKey": "Invalid Token"});
+    res.status(401).json({"verKey": "Invalid Token"});
   }
 
 });
@@ -63,10 +73,9 @@ app.post("/rm", async (req, res) => {
 
   } else {
     // invalid token
-    res.status(403).json({"verKey": "Invalid Token"});
+    res.status(401).json({"verKey": "Invalid Token"});
 
   }
-
 });
 
 app.post("/get/:id", async (req, res) => {
@@ -79,8 +88,8 @@ app.post("/get/:id", async (req, res) => {
 
   } else {
     // invalid token
-    res.status(403).json({"verKey": "Invalid Token"});
-
+    res.status(401).json({"verKey": "Invalid Token"});
+    logging.logging(res.ip + " " + req.body.username + " Used an invalid Token", "INFO");
   }
 });
 
@@ -92,7 +101,7 @@ app.get('/tokentest/:user/:token', async (req, res) => {
 });
 
 app.post('/tokentest', async (req, res) => {
-  const result = await verification.checkToken(req.body.username, req.params.verKey);
+  const result = await verification.checkToken(req.body.username, req.body.verKey);
   console.log(result);
   res.status(200).json({"valid":result});
 });
