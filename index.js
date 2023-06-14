@@ -40,6 +40,24 @@ app.get("/", (req, res) => {
 
 });
 
+app.use(function(req, res, next) {
+  //logging.logging("", "INFO");
+  logging.logConnection(res, "INFO");
+
+  var err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+
+  // the following timeout thing doesnt actually work
+  // setTimeout(() => {
+  //   try {
+  //     throw new Error('Broken');
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // }, 100) // replace with a server error code
+});
+
 app.listen(config.listenPort, () => {
   logging.logging("The server is listening on port " + config.listenPort, "INFO")
   logging.logging("The server is ready", "INFO");
