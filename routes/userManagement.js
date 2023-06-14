@@ -1,8 +1,15 @@
 const express = require("express");
 const app = express();
 
+const fs = require("node:fs");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
+
+const db = require("../db/database");
 const verification = require("../verification");
+const logging = require("../logging");
+const config = require("../config");
 
 /*
 This file is for managing user account creation logging in and generating and providing tokens
@@ -10,7 +17,7 @@ This file is for managing user account creation logging in and generating and pr
 
 /* Signup Page */
 app
-.get("signup", async (req, res) => {
+.get("/signup", async (req, res) => {
   if (config.signUpAllowed) {
       res.sendFile('website/html/signup.html', {root: __dirname});
     } else {
@@ -18,7 +25,7 @@ app
     }
 })
 
-.post("signup", async (req, res) => {
+.post("/signup", async (req, res) => {
   // this is where the data will be sent to create the account in the database
   // resend the signup page but with an execute code
 
@@ -50,6 +57,8 @@ app
     logging.logging(req.ip + " Attempted signup but signup is disabled!", "INFO");
   }
 
+  // I want this in verification.hashPassword()
+  // but I cant figure out how promises work
   function hashPassword(username, password) {
     bcrypt.genSalt(10, (err, salt) => {
       if (err) { logging.logging(err, "ERROR"); }
@@ -66,29 +75,26 @@ app
         logging.logging(userCreds, "DEBUG");
 
       const results = await db.createRow(table, userCreds);
-
       res.status(201).json({id: results[0]}); // replace this with a URL (/signup) and hopfully some kind of error code that might i have no idea how to collect /signup=1 or something like that
       });
     });
   }
 });
 
-
+/* Login Page */
 app
-.get("verify", async (req,res) => {
+.get("/verify", async (req,res) => {
   // this is a demo page for users to log in 
   res.sendFile('website/html/login.html', {root: __dirname});
 
   // whatever this thing is seems interesting ill have to look into res.render()
   // res.render('login', {
-    //   title: 'Express Login'
-    // });
+  //   title: 'Express Login'
+  // });
 
 })
 
-/* Login Page */
-
-.post("verify", async (req, res) => {
+.post("/verify", async (req, res) => {
     let table = "userAccounts";
     // this is to varify the user somehow
     // will this use another table? - that would be best if this is to be stored in the database.
@@ -106,12 +112,13 @@ app
       bcrypt.compare(password, hash, async (err, result) => {
         if (err) {
           logging.logging("Something Broke: " + err, "ERROR");
-          res.status(200).send({"ERROR":"A server side error has occurred"});
+          res.status(500).send({"ERROR":"A server side error has occurred"});
   
         } else if (result) {
           logging.logging("User logged in " + userCreds[0].username, "DEBUG");
   
           /* Not the way I wanted this done but it should work */
+          // this should be verification.generateToken(); but again I dont know how to make promises return values
           crypto.randomBytes(48, (err, buf) => {
             if (err) logging.logging(err, "ERROR");
         
@@ -129,8 +136,7 @@ app
             tokenStream.end();
         
             console.log(verKey);
-            res.sendStatus(200).json({"verKey" : verKey});
-            
+            res.sendStatus(201).json({"verKey" : verKey});
           });
   
           /* hopfully whoever saves me from this hell can figure out what I wanted here
@@ -139,12 +145,13 @@ app
           res.status(200).json({"verKey" : verKey});
           */
         } else {
-          logging.logging("Incorect Username/Password", "WARN"); // somehow also get the req.ip here so we can learn of more bots
-          
-          res.status(200).json({"verKey":"Incorect Username/Password"}); // Send Errors back as JSON
+          // somehow also get the req.ip here so we can learn of more bots // this might already "work"
+          logging.logging("Incorect Username/Password", "WARN");
+          // Send Errors back as JSON
+          res.status(401).json({"verKey":"Incorect Username/Password"});
         }
       });
     }
-  });
+});
 
 module.exports = app;
