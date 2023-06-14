@@ -136,7 +136,7 @@ app
             tokenStream.end();
         
             console.log(verKey);
-            res.sendStatus(201).json({"verKey" : verKey});
+            res.status(201).json({"verKey" : verKey});
           });
   
           /* hopfully whoever saves me from this hell can figure out what I wanted here
