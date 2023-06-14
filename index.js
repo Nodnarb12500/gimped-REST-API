@@ -21,8 +21,8 @@ db.checkTable("userData");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
- // needed for obtaining user IPs for logging even behind a proxy
- // apperently unsafe(easily manipulated)
+// needed for obtaining user IPs for logging even behind a proxy
+// apperently unsafe(easily manipulated)
 app.set('trust proxy', config.trustProxy);
 
 
