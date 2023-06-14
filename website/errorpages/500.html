@@ -23,8 +23,14 @@
         <hr>
         <h3 id="message">The server encountered an error and cant process your request!</h3>
 
-        <!-- Some JS to change the messages similar to 404.html -->
+        <script>
+            const msgArray = ["The server encountered an error and cant process your request!", "Server Sploded", "h.263"];
+            let message = document.getElementById("message");
+
+            let arrayIndex = Math.floor(Math.random() * (msgArray.length - 1) + 1);
+            console.log(arrayIndex);
+            message.innerText = msgArray[arrayIndex - 1];
+        </script>
 
     </body>
-
 </html>
