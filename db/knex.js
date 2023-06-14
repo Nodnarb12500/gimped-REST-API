@@ -12,7 +12,12 @@ fs.stat(config.databaseFile, function(err, stat) {
   } else if (err.code === 'ENOENT') {
     // File doesnt exist
     logging.logging("Creating the Database File!", "INFO");
-    fs.open(config.databaseFile, 'w');  
+      fs.open(config.databaseFile, "w", (err, fd) => {
+        if (err) {
+          logging.logging("An error occured creating the database file\n" + err, "DEBUG");
+        }
+        
+      });
   } else {
     logging.logging(err, "ERROR");
   }
