@@ -31,7 +31,8 @@ const signUpAllowed = true;
 // this is a placeholder i dont know what 10 would even mean here
 // this will eventually set the expiry time for when the tokens should expire
 // this can be an equation 
-const expireTime = 10; 
+// This is Miliseconds, the default value is 7days
+const expireTime = 1000 * 60 * 60 * 24 * 7;
 
 // LOGGING
 // Do you want to server to generate logs? 
