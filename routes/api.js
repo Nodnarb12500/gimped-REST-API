@@ -3,7 +3,7 @@ const app = express();
 
 const verification = require("../verification");
 
-/* API Shit */ // If I knew how to put this in another file I would.
+/* API Shit */
 // if verified {
 //   run SQL thing
 // } else {
@@ -11,12 +11,10 @@ const verification = require("../verification");
 // }
 // logging.logging(req.ip + "relevent thing", "API");
 
+
 // we are already in the /api path so /api should not be used here in the paths
-
-/* API Shit */
-
 app.post("/create", async (req, res) => {
-  const validated = await userManagement.checkToken(req.body.username, req.body.verKey);
+  const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
   apiRequest = userManagement.stripToken(req.body);
 
@@ -34,7 +32,7 @@ app.post("/create", async (req, res) => {
 
 app.post("/modify", async (req, res) => {
   /* Get id and send back the JSON */
-  const validated = await checkToken(req.body.username, req.body.verKey);
+  const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
   apiRequest = stripToken(req.body);
 
@@ -52,7 +50,7 @@ app.post("/modify", async (req, res) => {
 /* You might want to leave this commented out */
 app.post("/rm", async (req, res) => {
   // mark stuff for delete and hide instead?
-  const validated = await checkToken(req.body.username, req.body.verKey);
+  const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
   apiRequest = stripToken(req.body);
 
@@ -73,7 +71,7 @@ app.post("/rm", async (req, res) => {
 
 app.post("/get/:id", async (req, res) => {
   /* Get id and send back the JSON */
-  const validated = await checkToken(req.body.username, req.body.verKey);
+  const validated = await verification.checkToken(req.body.username, req.body.verKey);
 
   if (validated === true) {
     const results = await db.getRow(req.params.id);
@@ -87,10 +85,16 @@ app.post("/get/:id", async (req, res) => {
 });
 
 /* Token Test */
-app.get('/api/tokentest/:user/:token', async (req, res) => {
-  const result = await checkToken(req.params.user, req.params.token);
-
+app.get('/tokentest/:user/:token', async (req, res) => {
+  const result = await verification.checkToken(req.params.user, req.params.token);
   res.status(200).send(result); // tell the user in JSON that the token is valid or invaild
+
+});
+
+app.post('/tokentest', async (req, res) => {
+  const result = await verification.checkToken(req.body.username, req.params.verKey);
+  console.log(result);
+  res.status(200).json({"valid":result});
 });
 
 module.exports = app;
