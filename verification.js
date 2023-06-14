@@ -45,19 +45,14 @@ const rl = readline.createInterface({
 var userAuth, match;
 
 for await (const line of rl) {
-  // console.log("Line from File: " + line);
-
-  // do token comparisions here
-
   match = JSON.parse(line).verKey == verKey;
-  console.log(match)
+
   if (match === true) {
   userAuth = JSON.parse(line);
-  break;
+  break; // if match is found stop matching
   }
-  // if (match === true) return match;
-
 }
+
 if (match === true) {
   // if the token exists is it the correct user trying to use it.
   if (userAuth.username === user) {
@@ -101,7 +96,7 @@ function stripToken(userReq) {
 }
 
 module.exports = {
-    generateToken, // doesnt work but im leaving it exported because i want to get it working at somepoint
+    generateToken, // doesnt work but im leaving it exported because i want to get it working at some point
     checkToken,
     stripToken
 }
