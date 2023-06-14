@@ -38,14 +38,16 @@ const expireTime = 1000 * 60 * 60 * 24 * 7;
 // Do you want to server to generate logs? 
 const loggingEnabled = true;
 
+// do you want to log to the console And to a file (logging to file doesnt do anything yet)
+const log2console = true;
+
 // where do you want the logs to be stored
 const logpath = "server.log";
 
 // what do you want the server to log? currently debug is the only thing that exists
 const loglevel = "DEBUG";
 
-// do you want to log to the console And to a file (logging to file doesnt do anything yet)
-const log2console = true;
+
 
 module.exports = {
     listenAddress,
