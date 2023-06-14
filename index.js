@@ -19,6 +19,7 @@ db.checkTable("userData");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
 // needed for obtaining user IPs for logging even behind a proxy
 // apperently unsafe(easily manipulated)
 app.set('trust proxy', config.trustProxy);
@@ -40,22 +41,28 @@ app.get("/", (req, res) => {
 
 });
 
-app.use(function(req, res, next) {
-  //logging.logging("", "INFO");
-  logging.logConnection(res, "INFO");
+/* Error Handling and 404 */
+app.use((req, res, next) => {
+  logging.logConnection(req, "INFO");
+  if (req.method == "POST") {
+    res.status(404).json({"Error":"Does not Exist!"})
+  } else if (req.method == "GET") {
+    res.status(404).sendFile("./website/errorpages/404.html", {root: __dirname});
+  }
 
-  var err = new Error("Not Found");
-  err.status = 404;
-  next(err);
+});
 
-  // the following timeout thing doesnt actually work
-  // setTimeout(() => {
-  //   try {
-  //     throw new Error('Broken');
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // }, 100) // replace with a server error code
+app.use((err, req, res, next) => {
+  // logging.logging("Server encontered an error", "ERROR"); // include the IP of the user causing the error because its their fault not mine!
+  logging.logConnection(req, "INFO");
+  console.log(err.stack);
+
+  if (req.method == "POST") {
+    res.status(500).json({"Error":"Server Sploded"});
+  } else if (req.method == "GET") {
+    res.status(500).sendFile("./website/errorpages/500.html", {root: __dirname});
+  }
+
 });
 
 app.listen(config.listenPort, () => {
