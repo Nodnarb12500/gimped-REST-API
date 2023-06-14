@@ -19,9 +19,9 @@ This file is for managing user account creation logging in and generating and pr
 app
 .get("/signup", async (req, res) => {
   if (config.signUpAllowed) {
-      res.sendFile('website/html/signup.html', {root: __dirname});
+      res.status(200).sendFile('website/html/signup.html', {root: __dirname});
     } else {
-      res.send("Signup isnt allowed!");
+      res.status(418).json({"Error":"Signup isnt allowed!"}); // cant find an error code that matches to we're a teapot
     }
 })
 
@@ -29,24 +29,21 @@ app
   // this is where the data will be sent to create the account in the database
   // resend the signup page but with an execute code
 
-  if (config.signUpAllowed) {
+  if (config.signUpAllowed == true) {
+    // if signup is allowed make sure we arent creating an account with a username already in use
     let table =  "userAccounts";
     const test = await db.getRow(table, req.body.username);
 
     try {
       var userExists = (req.body.username === test[0].username);
-
     } catch (error) {
       logging.logging("Creating user for " + req.body.username, "INFO");
-      
     }
 
-    console.log(userExists);
-
-    if (userExists) {
-      // if name exists send error and tell user name exists
+    if (userExists === true) {
+      // if name exists send error and tell user they cant use that name
       logging.logging(req.ip + " Attempted to use a username already created", "DEBUG");
-      res.status(200).send("Username already in use please try another one"); // this should instead refresh the page but send an execute code to the page
+      res.status(200).json({"Error":"Username already in use!"}); // yell at the user in JSON
     } else {
       // name doesnt exist already we can let the user create the account
       hashPassword(req.body.username, req.body.password);
@@ -86,11 +83,6 @@ app
 .get("/verify", async (req,res) => {
   // this is a demo page for users to log in 
   res.sendFile('website/html/login.html', {root: __dirname});
-
-  // whatever this thing is seems interesting ill have to look into res.render()
-  // res.render('login', {
-  //   title: 'Express Login'
-  // });
 
 })
 
