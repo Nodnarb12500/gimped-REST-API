@@ -80,31 +80,45 @@ function pagination(table, count, page) {
 }
 
 /* Sorting */
-function searchDB(search, table, count, page) {
+function searchDB(search, table, count, page, sortBy) {
   // this might get complicated!
   // the search options might be separated by a | or some other delimiter
   // searching should search the database with the first option THEN 
   // nodeJS will do the rest of the searching putting the values that matched into the next array
   // looping until we run out of search terms
 
+  // thinking the delimiter should be ,
+  // let delimiter = ",";
+
+
   // make sure we have what we need so we dont crash the database!
   if (table == undefined) {return "table is undefined!";}
   if (search == undefined) {search = '*';console.log("search is undefined")}
   if (count == undefined) {count = 25;console.log("count is undefined")}
   if (page == undefined) {page = 1;console.log("page is undefined")}
-  
+  if (sortBy == undefined) {sortBy = "DESC"} // sort from newest to oldest
 
+  // limits set on users of the API
+  if (count >= 100) {count = 100;}
+
+  // let searchTerms = [multipul, search, terms, here, for, sorting, very, soon!];
+  // knex(table).whereLike('users', "\%" + searchTerms[0] + "\%").orderBy(sortBy).limit(count).offset.page;
+  // for (i = 1; i < searchTerms.length; i++){
+    // Sort though all search terms refining the list down!
+  // }
+  // ill be sorting though an array of objects so this might be a pain in the ass!
+  // this will also not give the user the number of results they asked for since they will removed if they dont match other terms!
+  // this needs to be done better!
 
   // currently this isnt a great idea for the current setup of this server
   // the setup of the server is influenced heavily by the next project I will be doing!
 
   if (search == '*') {
-    return knex(table).select('*').limit(count).offset(page);
+    return knex(table).select('*').orderBy(sortBy).limit(count).offset(page);
   } else {
-    // this needs some more work. i want to be able to process several search terms and this only allows 1 for now
-    return knex(table).whereLike('users', "\%" + search + "\%").limit(count).offset.page;
+    // this needs some more work. I want to be able to process several search terms and this only allows 1 for now
+    return knex(table).whereLike('users', "\%" + search + "\%").orderBy(sortBy).limit(count).offset.page;
   }
-  
 
 }
 
