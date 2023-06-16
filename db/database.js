@@ -80,12 +80,31 @@ function pagination(table, count, page) {
 }
 
 /* Sorting */
-function searchDB(search, count, page) {
+function searchDB(search, table, count, page) {
   // this might get complicated!
   // the search options might be separated by a | or some other delimiter
   // searching should search the database with the first option THEN 
   // nodeJS will do the rest of the searching putting the values that matched into the next array
   // looping until we run out of search terms
+
+  // make sure we have what we need so we dont crash the database!
+  if (table == undefined) {return "table is undefined!";}
+  if (search == undefined) {search = '*';console.log("search is undefined")}
+  if (count == undefined) {count = 25;console.log("count is undefined")}
+  if (page == undefined) {page = 1;console.log("page is undefined")}
+  
+
+
+  // currently this isnt a great idea for the current setup of this server
+  // the setup of the server is influenced heavily by the next project I will be doing!
+
+  if (search == '*') {
+    return knex(table).select('*').limit(count).offset(page);
+  } else {
+    // this needs some more work. i want to be able to process several search terms and this only allows 1 for now
+    return knex(table).whereLike('users', "\%" + search + "\%").limit(count).offset.page;
+  }
+  
 
 }
 
