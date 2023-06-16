@@ -62,8 +62,8 @@ app.use((err, req, res, next) => {
 
 });
 
-app.listen(config.listenPort, () => {
-  logging.logging("The server is listening on port " + config.listenPort, "INFO")
+app.listen(config.listenPort, config.listenAddress, () => {
+  logging.logging(`The server is listening on ${condig.listenAddress}:${config.listenPort}`, "INFO");
   logging.logging("The server is ready", "INFO");
 
 });
