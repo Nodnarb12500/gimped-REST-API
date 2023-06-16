@@ -27,6 +27,10 @@ const databaseFile = "db/demo.sqlite3";
 // if you arent on a headless server http://localhost:3000/signup will work
 const signUpAllowed = true;
 
+// Limit users to 1 Row in the database. 
+// this is useful for if you are storing data for your users as strings
+// so you dont have a bunch of conflicting data to send back
+const dbLimit = true;
 
 // this is a placeholder i dont know what 10 would even mean here
 // this will eventually set the expiry time for when the tokens should expire
@@ -55,6 +59,7 @@ module.exports = {
     trustProxy,
     databaseFile,
     signUpAllowed,
+    dbLimit,
     expireTime,
     loggingEnabled,
     logpath,

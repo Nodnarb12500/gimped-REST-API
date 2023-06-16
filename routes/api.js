@@ -19,19 +19,19 @@ app.post("/create", async (req, res) => {
   const table = "userData";
   apiRequest = verification.stripToken(req.body);
 
-
   if (validated === true) {
-    const exists = await db.getRow(table, apiRequest.username);
-    if (exists) {
-      // either modify the row or tell the user to user the correct URL
-      // also perhaps make the row that would be generated here by default 
-      //  - and users should already be using /modify in this case
+    if (dbLimit) {
+      const exists = await db.getRow(table, apiRequest.username);
+      if (exists) {
+        // tell the user they cant make more rows in the database, and to use the proper API URI
 
-    } else {
-      const results = await db.createRow(table, apiRequest);
-      res.status(201).json({id: results[0]});
+        res.status(403).json({"ERROR":"You already have data stored, Please use /api/modify"});
+      } else {
+        const results = await db.createRow(table, apiRequest);
+        res.status(201).json({id: results[0]});
+      }
+
     }
-    
 
   } else {
     // Invalid token
