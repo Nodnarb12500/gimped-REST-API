@@ -93,6 +93,23 @@ app.post("/get/:id", async (req, res) => {
   }
 });
 
+
+app
+.get("/search", (req, res) => {
+
+})
+
+/*
+ * This API call should also request the table name as well which might get a little weird
+ * Im not entirely sure how I would do that on a generalized context since some times it might be fine
+ * to show table names and other times it might not be? my API requires authentication now so it should be fine
+ * to use tablenames directly but i still need to find a way to do that
+ */
+
+.post("/search", (req, res) => {
+
+});
+
 /* Token Test */
 app.post('/tokentest', async (req, res) => {
   const result = await verification.checkToken(req.body.username, req.body.verKey);
