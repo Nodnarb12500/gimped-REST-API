@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin!</title>
+
+        <link rel="stylesheet" href="/resources/js/main.css">
+        <!-- <link rel="stylesheet" href="/resources/js/admin.css"> -->
+
+        <script src="/resources/js/adminpanel.js"></script>
+
+
+        <style>
+            #dataCollums {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+        </style>        
+
+    </head>
+
+    <body class="center">
+
+        <main>
+            <h1>Admin Panel!</h1>
+            <hr>
+            <p>this is where the site admin can view tokens, maybe allow password resets for users, and view some database information</p>
+            <p>the things viewed here are strictly for testing purposes and some of these things should never be viewed like this</p>
+        </main>
+        <hr>
+
+        <section>
+            <!-- 
+                The section below should probly be done in javascript using the fetch() function
+                while a username/password will be needed,
+                thats something that can be addressed easily with a box of some kind
+             -->
+            <form action="/verify" method="post">
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="usernameBox">
+                <br>
+                <label for="password"></label>
+                <input type="password" name="password" id="passwordBox">
+
+            </form>
+
+            <form action="" method="post">
+                <!-- this will be for obtaining a token! -->
+            </form>
+
+            <button></button>
+        </section>
+
+        <!-- In the hopfully unlikely senario where someone requests an account to be deleted this horrible page maybe should be able to do such a thing -->
+
+        <div id="focusedUserAccount">
+            <!-- similar to the dataCollums but only for a single user to edit anything or delete the user/reset password? -->
+
+        </div>
+
+        <div id="dataCollums"> <!-- the data below should be in 3 collums and in a flex box -->
+            <section id="userAccounts">
+                <!-- populated with all the data in a scrollable window -->
+            </section>
+
+            <section id="verKey">
+                <!-- populated with all the data in a scrollable window -->
+            </section>
+
+            <section id="userData">
+                <!-- populated with all the data in a scrollable window -->
+            </section>
+
+        </div>
+
+    </body>
+
+</html>
