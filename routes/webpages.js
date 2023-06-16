@@ -37,3 +37,8 @@ app.get("/verify", (req, res) => {
   res.sendFile('resources/html/login.html', {root: __dirname});
 
 });
+
+app.get("/adminpanel", (req, res) => {
+  // this will be the admin panel for testing or for viewing table data
+  res.status(200).sendFile('resources/html/admin.html', {root: __dirname});
+});
