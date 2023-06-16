@@ -4,6 +4,29 @@ const config = require('./config');
 /* this file will generate logs for the server. */
 var loggingReported = false; // this is so we can yell at the user in the console for disabling logs
 
+let connectionLogger = (req, res, next) => { // Middleware Function!
+
+
+    let method = req.method;
+    let url = req.url;
+    let status = res.statusCode;
+
+    let start = process.hrtime();
+    const durationInMilliseconds = getActualRequestDurationInMilliseconds(start);
+
+    // let log = `[${formatted_date}] ${method}:${url} ${status}`;
+    let log = `[${formatted_date}] ${method}:${url} ${status} ${durationInMilliseconds.toLocaleString()} ms`;
+    console.log(log);
+    next();
+}
+
+const getActualRequestDurationInMilliseconds = start => {
+    const NS_PER_SEC = 1e9; // convert to nanoseconds
+    const NS_TO_MS = 1e6; // convert to milliseconds
+    const diff = process.hrtime(start);
+    return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
+  };
+
 function logConnection(req, loglevel) {
     if (!loglevel) {
         loglevel = "INFO";
@@ -63,7 +86,7 @@ function datetime(format, tokenExpire) {
 
     if (format == "logging") {
         // this is the format I use for logging
-        result = (d.getMonth() + 1) + "/" + d.getDay() + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+        result = (d.getMonth() + 1) + "-" + d.getDay() + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 
     } else if (format == "token") {
         result = d.getTime() + config.expireTime;
@@ -82,6 +105,6 @@ function datetime(format, tokenExpire) {
 
 module.exports = {
     logging,
-    logConnection,
+    connectionLogger,
     datetime
 }
