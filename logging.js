@@ -27,18 +27,6 @@ const getActualRequestDurationInMilliseconds = start => {
     return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
   };
 
-function logConnection(req, loglevel) {
-    if (!loglevel) {
-        loglevel = "INFO";
-    }
-    // log the HTTP code to userAgent is questionable if its really needed
-    // http code doesnt seem to be something thats easily obtainable right now
-    logging("Connected Client "+ req.ip + " " + req.method + " " + req.path + " " + req.get('User-Agent'), loglevel);
-
-    // apache log for reference
-    // 127.0.0.1 - - [20/Jul/2021:00:00:05 -0400] "GET / HTTP/1.1" 200 9523 "-" "Munin - http_loadtime"
-}
-
 function logging(message, loglevel) {
     if (loggingReported === false) {
         if (config.loggingEnabled) {
