@@ -12,21 +12,9 @@ If I end up remove large sections of this program its because it became to big, 
         - knex
         - sqlite3
 
-# Installation
-```
-git clone https://github.com/Nodnarb12500/gimped-REST-API
-cd gimped-REST-API
-npm i
-npm start
-```
+# Documentation
 
-# Configuration
-
-This Needs rewritten lmao. but i want to make configuring a little easier first.
-
-This will be kinda difficult to explain and it might change in future versions.
-a large amount of configuration can happen in config.js some other configuration has to be done manually in db/database.js to set up the databases how you would want them.
-while not all the settings are there, it might be enough for most people and if its not knex.js is what i use to connect to a database. you can even just mySQL and it will apperently work without modifications to the code outside of the knex.js i wrote.
+https://github.com/Nodnarb12500/gimped-REST-API/wiki
 
 # Progress
 
