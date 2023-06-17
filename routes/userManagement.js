@@ -29,25 +29,27 @@ app
 .post("/signup", async (req, res) => {
   // this is where the data will be sent to create the account in the database
   // resend the signup page but with an execute code
-
+  let table =  "userAccounts";
   if (config.signUpAllowed == true) {
     // if signup is allowed make sure we arent creating an account with a username already in use
-    let table =  "userAccounts";
+    
     const test = await db.getRow(table, req.body.username);
-
     try {
       var userExists = (req.body.username === test[0].username);
     } catch (error) {
-      logging.logging("Creating user for " + req.body.username, "INFO");
+      logging.logging(`Creating an account for ${userCreds.username} in ${table}`, "INFO");
     }
 
-    if (userExists === true) {
-      // if name exists send error and tell user they cant use that name
+    if (userExists === true) { // if name exists send error, if it doesnt exist make the account
       logging.logging(req.ip + " Attempted to use a username already created", "DEBUG");
-      res.status(200).json({"Error":"Username already in use!"}); // yell at the user in JSON
+      res.status(200).json({"Error":"Username already in use!"});
+
     } else {
-      // name doesnt exist already we can let the user create the account
-      hashPassword(req.body.username, req.body.password);
+      verification.hashPassword(req.body.username, req.body.password).then(async userCreds => {        
+        const results = await db.createRow(table, userCreds);
+        res.status(201).json({"Success!":`User account ${req.body.username} created!`});
+
+      });
     }
 
   } else {
@@ -55,28 +57,6 @@ app
     logging.logging(req.ip + " Attempted signup but signup is disabled!", "INFO");
   }
 
-  // I want this in verification.hashPassword()
-  // but I cant figure out how promises work
-  function hashPassword(username, password) {
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) { logging.logging(err, "ERROR"); }
-
-      bcrypt.hash(password, salt, async function(err, hash) {
-        if (err) { logging.logging(err, "ERROR"); }
-
-        let table = "userAccounts";
-        userCreds = {
-          username: username,
-          password: hash,
-          salt: salt
-        }
-        logging.logging(userCreds, "DEBUG");
-
-      const results = await db.createRow(table, userCreds);
-      res.status(201).json({id: results[0]}); // replace this with a URL (/signup) and hopfully some kind of error code that might i have no idea how to collect /signup=1 or something like that
-      });
-    });
-  }
 });
 
 /* Login Page */

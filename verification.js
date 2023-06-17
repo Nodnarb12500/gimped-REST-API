@@ -2,12 +2,32 @@ const crypto = require("crypto");
 const fs = require("node:fs");
 const readline = require("node:readline");
 
+const bcrypt = require("bcrypt");
 
 const logging = require("./logging");
 
 /* Verification */
 // load/make if doesnt exist file with verification tokens strored next to when they expire.
 // if a token expires make the user have to login again.
+
+async function hashPassword(username, password) {
+  return new Promise((resolve, reject) => {
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) {logging.logging(err, "ERROR");}
+
+      bcrypt.hash(password, salt, async function(err, hash) {
+        if (err) {logging.logging(err, "ERROR");}
+
+        result = {
+          username: username,
+          password: hash,
+        }
+
+        resolve(result);
+      })    
+    })
+  })
+}
 
 async function generateToken(user) {
   return new Promise(function(resolve, reject) {
@@ -33,7 +53,6 @@ async function generateToken(user) {
   });
 }
 
-// make this not async? // do this after making a new commit
 async function checkToken(user, verKey) {
 const fileStream = fs.createReadStream("./tokens.json");
 const rl = readline.createInterface({
@@ -90,7 +109,8 @@ function stripToken(userReq) {
 }
 
 module.exports = {
-    generateToken, // doesnt work but im leaving it exported because i want to get it working at some point
+    hashPassword,
+    generateToken,
     checkToken,
     stripToken
 }
