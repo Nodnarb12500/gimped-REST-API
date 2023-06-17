@@ -29,7 +29,7 @@ function checkTable(tableName){
           t.increments('id', { primaryKey: true });
           t.string('username').notNullable();
           t.string('password');
-          t.string('salt');
+          // t.string('salt'); // bcrypt doesnt need the salt stored separately!
 
         });
         
