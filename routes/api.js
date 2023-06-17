@@ -97,6 +97,7 @@ app.post("/get/:id", async (req, res) => {
 app
 .get("/search", (req, res) => {
 
+  res.status(200).sendFile("/website/html/search.html", __dirname);
 })
 
 /*
@@ -113,7 +114,6 @@ app
 /* Token Test */
 app.post('/tokentest', async (req, res) => {
   const result = await verification.checkToken(req.body.username, req.body.verKey);
-  console.log(result);
   res.status(200).json({"valid":result});
 });
 
