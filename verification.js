@@ -60,7 +60,7 @@ if (match === true && logging.datetime("tokenCheck", userAuth.expireDate)) {
     return match;
 
   } else if (match === true || logging.datetime("tokenCheck", userAuth.expireDate)) {
-    console.log("token is either invalid or expired!");
+    // token is either invalid or expired!
     match = false;
     return match;
 

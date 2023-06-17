@@ -62,7 +62,7 @@ function deleteRow(table, id) {
 function getRow(table, user) {
   // this grabs a specific row and should not have pagination
   //return knex(table).where("id", id); // im keeping this line because its what i normally use
-  console.log("collecting " + user + "'s data from table " + table);
+  // console.log("collecting " + user + "'s data from table " + table); //debugLine
   return knex(table).where("username", user);
 }
 
@@ -74,7 +74,7 @@ function pagination(table, count, page) {
   }
   let n = count * page;
 
-  console.log("getting " + count + " rows!");
+  // console.log("getting " + count + " rows!"); // debugLine
   return knex(table).select('*').limit(count).offset(n);
 
 }
@@ -93,6 +93,7 @@ function searchDB(search, table, count, page, sortBy) {
 
   // make sure we have what we need so we dont crash the database!
   if (table == undefined) {return "table is undefined!";}
+  // console.log("debugging!");
   if (search == undefined) {search = '*';console.log("search is undefined")}
   if (count == undefined) {count = 25;console.log("count is undefined")}
   if (page == undefined) {page = 1;console.log("page is undefined")}
