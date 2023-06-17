@@ -47,7 +47,7 @@ app.use((req, res, next) => {
   } else if (req.method == "GET") {
     res.status(404).sendFile("./website/errorpages/404.html", {root: __dirname});
   }
-
+  next();
 });
 
 app.use((err, req, res, next) => {
@@ -59,11 +59,11 @@ app.use((err, req, res, next) => {
   } else if (req.method == "GET") {
     res.status(500).sendFile("./website/errorpages/500.html", {root: __dirname});
   }
-
+  next();
 });
 
 app.listen(config.listenPort, config.listenAddress, () => {
-  logging.logging(`The server is listening on ${condig.listenAddress}:${config.listenPort}`, "INFO");
+  logging.logging(`The server is listening on ${config.listenAddress}:${config.listenPort}`, "INFO");
   logging.logging("The server is ready", "INFO");
 
 });
