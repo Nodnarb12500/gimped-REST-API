@@ -5,18 +5,36 @@ const config = require('./config');
 var loggingReported = false; // this is so we can yell at the user in the console for disabling logs
 
 let connectionLogger = (req, res, next) => { // Middleware Function!
-
-
+    formatted_date = datetime("logging");
+    let ip = req.ip;
     let method = req.method;
     let url = req.url;
-    let status = res.statusCode;
-
     let start = process.hrtime();
-    const durationInMilliseconds = getActualRequestDurationInMilliseconds(start);
+    const durationInMilliseconds = getActualRequestDurationInMilliseconds(start); // i dont think this actually does anything
+
+    let log;
+
+    if (res.headersSent) {
+        let status = res.statusCode; // this does nothing if something 404s it doesnt know
+        log = `${ip} ${method}:${url} ${status} ${durationInMilliseconds.toLocaleString()} ms`;
+        logging(log, "INFO");
+    } else {
+        res.on('finish', () => {
+            let status = res.statusCode; // this does nothing if something 404s it doesnt know
+            log = `${ip} ${method}:${url} ${status} ${durationInMilliseconds.toLocaleString()} ms`;
+            logging(log, "INFO");
+        });
+    }
+
+    // I really like this function but it doesnt wait till after the res.send happens on anything so res doesnt get updated ever
+    // so things like status and durationInMiliseconds are values that cant be trusted or used
+    
 
     // let log = `[${formatted_date}] ${method}:${url} ${status}`;
-    let log = `[${formatted_date}] ${method}:${url} ${status} ${durationInMilliseconds.toLocaleString()} ms`;
-    console.log(log);
+    // let log = `${formatted_date} [INFO] ${ip} ${method}:${url} ${res.statusCode} ${durationInMilliseconds.toLocaleString()} ms`;
+    
+    
+
     next();
 }
 
@@ -45,17 +63,16 @@ function logging(message, loglevel) {
         loggingReported = true;
     }
 
-
-    // open a file to a variable
-    // logfile = fs.open(logPath) // open this file for appending
-
     if (config.loggingEnabled) {
-        var message2log = datetime() + " " + "LOG LEVEL: " + loglevel + "| " + message;
+        //var message2log = datetime() + " " + "LOG LEVEL: " + loglevel + "| " + message;
+        let message2log = `${datetime("logging")} [${loglevel}] | ${message}`;
 
         if (config.log2console) { 
             console.log(message2log);
         }
         
+        // change logpath to a directory create directory if it doesnt exist and create a file based on what day it is!
+
         var logStream = fs.createWriteStream(config.logpath, {flags: 'a+'}); // Open the file
         logStream.write(message2log + "\n"); // write the line
         logStream.end(); // close the file
