@@ -10,6 +10,7 @@ const db = require("../db/database");
 const verification = require("../verification");
 const logging = require("../logging");
 const config = require("../config");
+const { generateKey } = require("node:crypto");
 
 /*
 This file is for managing user account creation logging in and generating and providing tokens
@@ -109,32 +110,10 @@ app
         } else if (result) {
           logging.logging("User logged in " + userCreds[0].username, "DEBUG");
   
-          /* Not the way I wanted this done but it should work */
-          // this should be verification.generateToken(); but again I dont know how to make promises return values
-          crypto.randomBytes(48, (err, buf) => {
-            if (err) logging.logging(err, "ERROR");
-        
-            let verKey = buf.toString('hex');
-            let date = logging.datetime("token"); // this needs to use logging.datetime(); to create a date but logging.datetime() should be more universal
-        
-            result = {
-              username: req.body.username,
-              verKey: verKey,
-              expireDate: date
-            }
-        
-            var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'}); 
-            tokenStream.write(JSON.stringify(result) + "\n");
-            tokenStream.end();
-
-            res.status(201).json({"verKey" : verKey});
+          verification.generateToken(req.body.username).then(result => {
+            res.status(200).json({"verKey" : result});
           });
-  
-          /* hopfully whoever saves me from this hell can figure out what I wanted here
-          verKey = await generateToken(req.body.username);
-          console.log("verKey outside the promise: " + verKey); // this should be the generated token
-          res.status(200).json({"verKey" : verKey});
-          */
+          
         } else {
           // somehow also get the req.ip here so we can learn of more bots // this might already "work"
           logging.logging("Incorect Username/Password", "WARN");

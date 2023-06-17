@@ -10,28 +10,27 @@ const logging = require("./logging");
 // if a token expires make the user have to login again.
 
 async function generateToken(user) {
-    let verKey = crypto.randomBytes(48, (err, buf) => {
-  // return crypto.randomBytes(48, (err, buf) => {
-    if (err) logging.logging(err, "ERROR");
-
-    let token = buf.toString('hex');
-    let date = "now"; // this needs to use logging.datetime(); to create a date but logging.datetime() should be more universal
-
-    result = {
-      username: user,
-      verKey: token,
-      createDate: date
-    }
-
-    var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
-    tokenStream.write(JSON.stringify(result) + "\n");
-    tokenStream.end();
-
-    console.log(token);
-    
+  return new Promise(function(resolve, reject) {
+    crypto.randomBytes(48, (err, buf) => {
+      if (err !== null) {
+        logging.logging(err, "ERROR");
+        reject(err);
+      } else {
+        let token = buf.toString('hex');
+        let date = logging.datetime("token");
+        result = {
+          username: user,
+          verKey: token,
+          createDate: date
+        }
+  
+        var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
+        tokenStream.write(JSON.stringify(result) + "\n");
+        tokenStream.end();
+        resolve(token);
+      }
+    });
   });
-
-  return verKey;
 }
 
 // make this not async? // do this after making a new commit
