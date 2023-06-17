@@ -8,7 +8,7 @@ might be risky to have here.
 // SERVER
 
 // this work as a hostname but this server doesnt care about what host name you use it should just work
-const listenAddress = "192.168.1.145";
+const listenAddress = "localhost";
 
 // what port do you want to server to run on.
 const listenPort = 3000;
