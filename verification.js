@@ -41,7 +41,7 @@ async function generateToken(user) {
         result = {
           username: user,
           verKey: token,
-          createDate: date
+          expireDate: date
         }
   
         var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
@@ -54,48 +54,42 @@ async function generateToken(user) {
 }
 
 async function checkToken(user, verKey) {
-const fileStream = fs.createReadStream("./tokens.json");
-const rl = readline.createInterface({
-  input : fileStream,
-  crlfDelay: Infinity,
-});
+  const fileStream = fs.createReadStream("./tokens.json");
+  const rl = readline.createInterface({
+    input : fileStream,
+    crlfDelay: Infinity,
+  });
 
-var userAuth, match;
+  var userAuth, match;
 
-for await (const line of rl) {
-  match = JSON.parse(line).verKey == verKey;
-
-  if (match === true) {
-  userAuth = JSON.parse(line);
-  break; // if match is found stop matching
+  for await (const line of rl) {
+    match = JSON.parse(line).verKey == verKey;
+    if (match === true) {
+    userAuth = JSON.parse(line);
+    break; // if match is found stop matching
+    }
   }
-}
 
-if (match === true && logging.datetime("tokenCheck", userAuth.expireDate)) {
-  // if the token exists is it the correct user trying to use it.
-  if (userAuth.username === user) {
-    // token isnt invalid OR expired!
-    return match;
+  if (match === true && logging.datetime("tokenCheck", userAuth.expireDate)) {
+    // if the token exists is it the correct user trying to use it.
+    if (userAuth.username === user) {
+      logging.logging(`Token is Valid!`, "DEBUG");
+      return match;
 
-  } else if (match === true || logging.datetime("tokenCheck", userAuth.expireDate)) {
-    // token is either invalid or expired!
-    match = false;
-    return match;
+    } else if (userAuth.username !== user) {
+      logging.logging(`${user} Attempted to use ${userAuth.username}'s Auth Token!`, "WARN");
+      match = false;
+      return match;
+
+    } else {
+      logging.logging(`No idea what would cause this`, "DEBUG");
+    }
 
   } else {
-    logging.logging(user + " Attempted to use " + userAuth.username + "'s Auth Token!", "WARN");
-
+    logging.logging(`Token is Invalid or Expired!`, "DEBUG");
     match = false;
-
+    return match;
   }
-
-} else {
-  logging.logging(user + " Used invalid key", "WARN");
-  match = false; // redundent?
-}
-
-
-return match;
 }
 
 function stripToken(userReq) {

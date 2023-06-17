@@ -37,7 +37,7 @@ app
     try {
       var userExists = (req.body.username === test[0].username);
     } catch (error) {
-      logging.logging(`Creating an account for ${userCreds.username} in ${table}`, "INFO");
+      logging.logging(`Creating an account for ${req.body.username} in ${table}`, "INFO");
     }
 
     if (userExists === true) { // if name exists send error, if it doesnt exist make the account
