@@ -69,20 +69,19 @@ function logging(message, loglevel) {
 function datetime(format, tokenExpire) {
     if (format == undefined) { format = "logging"; }
 
-    const d = new Date();
+    let current_datetime = new Date();
     var result;
 
     if (format == "logging") {
-        // this is the format I use for logging
-        result = (d.getMonth() + 1) + "-" + d.getDay() + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+        return `[${current_datetime.getFullYear()}-${(String(current_datetime.getMonth() + 1)).padStart(2, 0)}-${String(current_datetime.getDate()).padStart(2, 0)} ${String(current_datetime.getHours()).padStart(2, 0)}:${String(current_datetime.getMinutes()).padStart(2, 0)}:${String(current_datetime.getSeconds()).padStart(2, 0)}]`;
 
     } else if (format == "token") {
-        result = d.getTime() + config.expireTime;
+        result = current_datetime.getTime() + config.expireTime;
 
     } else if (format == "tokenCheck") {
         // valid?
-        if (tokenExpire < d.getTime()) { result = false; } 
-        else if (tokenExpire > d.getTime()) { result = true; }
+        if (tokenExpire < current_datetime.getTime()) { result = false; } 
+        else if (tokenExpire > current_datetime.getTime()) { result = true; }
 
     } else { 
         console.log("Something unexpected happened in logging.js");
