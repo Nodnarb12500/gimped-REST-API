@@ -10,7 +10,6 @@ const db = require("../db/database");
 const verification = require("../verification");
 const logging = require("../logging");
 const config = require("../config");
-const { generateKey } = require("node:crypto");
 
 /*
 This file is for managing user account creation logging in and generating and providing tokens
