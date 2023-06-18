@@ -4,17 +4,26 @@ const app = express();
 const verification = require("../verification");
 const db = require("../db/database");
 
-/* API Shit */
-// if verified {
-//   run SQL thing
-// } else {
-//   yell at user to login in JSON
-// }
-// logging.logging(req.ip + "relevent thing", "API");
+
+/*
+ * Before I forget what the hell I'm doing
+ * make each API call get called on a table name (users @tag?)
+ * useraccounts on normal circumstances should NEVER be called and they are dealt with in userManagement.js and verification.js
+ * this database calls should be done on the table name or a users name and should be sorted newest to oldest select('*').orderBy(DESC)
+ * 
+ * 
+ * Something i had forgotten to think about was how to take data from several tables 
+ * and append those together for suggestions or general viewing.
+ * The above is only an issue if someone were to try and use this as a platform for multipul people to upload content and expect that content
+ * to be visible on more then just that single users feed or page
+ * 
+ */
 
 
 // we are already in the /api path so /api should not be used here in the paths
-app.post("/create", async (req, res) => {
+
+/* CREATING/MODIFYING DATA */
+app.post("/create/:table", async (req, res) => {
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
   apiRequest = verification.stripToken(req.body);
@@ -40,7 +49,7 @@ app.post("/create", async (req, res) => {
 
 });
 
-app.post("/modify", async (req, res) => {
+app.post("/modify/:table", async (req, res) => {
   /* Get id and send back the JSON */
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
@@ -58,7 +67,7 @@ app.post("/modify", async (req, res) => {
 });
 
 /* You might want to leave this commented out */
-app.post("/rm", async (req, res) => {
+app.post("/rm/:table", async (req, res) => {
   // mark stuff for delete and hide instead?
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
@@ -78,8 +87,11 @@ app.post("/rm", async (req, res) => {
   }
 });
 
-app.post("/get/:id", async (req, res) => {
+/* VIEWING DATA */
+// These API calls should not require authentication
+app.post("/get/:table", async (req, res) => {
   /* Get id and send back the JSON */
+  // this shoulnt actually need authentication
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
 
   if (validated === true) {
@@ -92,7 +104,6 @@ app.post("/get/:id", async (req, res) => {
     logging.logging(res.ip + " " + req.body.username + " Used an invalid Token", "INFO");
   }
 });
-
 
 app
 .get("/search", (req, res) => {
