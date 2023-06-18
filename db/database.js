@@ -40,6 +40,18 @@ function checkTable(tableName){
   }
 }
 
+/*
+ * You may notice that theres 2 rows in each of these functions that can use either the username OR the id
+ * I want to make these functions deal with both things but they dont do that just yet
+ * 
+ * If I give the database an ID number I expect it to use that ID number and modify or fetch the data I want
+ * Same as above for a Username. I might get away with a caveman solution of Is number? ID | is String? username!
+ * and I might use such a method for now. 
+ * 
+ * It might be safer and more Secure if i make 2 sets of functions one for user accounts and one for userdata and posts by the user
+ * 
+ */
+
 /* Modifying the database */
 function createRow(table, data) {
   // this should only ever run on the creation of a new user if specified
@@ -47,8 +59,9 @@ function createRow(table, data) {
   return knex(table).insert(data);
 }
 
-function modifyRow(table, id, data) {
+function modifyRow(table, user, data) {
   // this should run anytime the user syncs their bookmarks
+  // return knex(table).where("id", id).update(data);
   return knex(table).where("id", id).update(data);
 }
 
@@ -58,7 +71,6 @@ function deleteRow(table, id) {
 }
 
 /* Searching the database */
-
 function getRow(table, user) {
   // this grabs a specific row and should not have pagination
   //return knex(table).where("id", id); // im keeping this line because its what i normally use
@@ -76,6 +88,14 @@ function pagination(table, count, page) {
 
   // console.log("getting " + count + " rows!"); // debugLine
   return knex(table).select('*').limit(count).offset(n);
+
+}
+
+function databaseSize(table, count) {
+  if (count >= 100) {count = 100;}
+  // this function is to tell the client how meny pages there are and what to set the max page button to
+  let numberOfRows = knex(table).count('*');
+  return (numberOfRows/100);
 
 }
 
