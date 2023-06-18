@@ -57,7 +57,7 @@ app.post("/modify/:table", async (req, res) => {
   /* Get id and send back the JSON */
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
-  apiRequest = stripToken(req.body);
+  apiRequest = verification.stripToken(req.body);
 
   if (validated === true) {
     const results = await db.modifyRow(table, apiRequest);
@@ -75,7 +75,7 @@ app.post("/rm/:table", async (req, res) => {
   // mark stuff for delete and hide instead?
   const validated = await verification.checkToken(req.body.username, req.body.verKey);
   const table = "userData";
-  apiRequest = stripToken(req.body);
+  apiRequest = verification.stripToken(req.body);
 
   // require the user to retype their password for deleting their account
   // make sure to remove the users tokens
