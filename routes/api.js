@@ -3,6 +3,7 @@ const app = express();
 
 const verification = require("../verification");
 const db = require("../db/database");
+const config = require("../config");
 
 
 /*
@@ -30,10 +31,9 @@ app.post("/create/:table", async (req, res) => {
 
   // just noticed i didnt finish this yet lmao
   // for how the server is currently set up lets assume database is limited
-  const dbLimit = true;
 
   if (validated === true) {
-    if (dbLimit) {
+    if (config.dbLimit) {
       const exists = await db.getRow(table, apiRequest.username);
       if (exists) {
         // tell the user they cant make more rows in the database, and to use the proper API URI
