@@ -49,6 +49,7 @@ const log2console = true;
 const logpath = "server.log";
 
 // what do you want the server to log? currently debug is the only thing that exists
+// actually this setting just doesnt do anything yet either
 const loglevel = "DEBUG";
 
 
