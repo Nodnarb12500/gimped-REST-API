@@ -48,9 +48,9 @@ const getActualRequestDurationInMilliseconds = start => {
 }
 
 var limiter = RateLimit({
-    // 5 requests per minute per IP
+    // 10 requests per minute per IP
     msWindow: 1*60*1000, // 1 minute?
-    max: 5
+    max: 10
 })
 
 
