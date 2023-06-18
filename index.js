@@ -24,16 +24,16 @@ app.use(bodyParser.json());
 // apperently unsafe(easily manipulated)
 app.set('trust proxy', config.trustProxy);
 
-app.use(logging.connectionLogger); // doesnt log 404s correctly!
+app.use(logging.limiter);
+app.use(logging.connectionLogger);
 
-/* Web Pages */ // If i knew how to put this in another File I would.
+/* Web Pages */
 app.use("/resources", express.static("./website/resources"));
 app.set("/resources", express.static("./website/resources"));
 
 /* API Shit */
 app.use("/api", api);
 app.use("/", userManagement);
-
 
 app.get("/", (req, res) => {
   res.sendFile('website/html/index.html', {root: __dirname});

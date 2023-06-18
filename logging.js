@@ -1,10 +1,12 @@
 const fs = require('fs');
 const config = require('./config');
 
+const RateLimit = require('express-rate-limit');
+
 /* this file will generate logs for the server. */
 var loggingReported = false; // this is so we can yell at the user in the console for disabling logs
 
-let connectionLogger = (req, res, next) => { // Middleware Function!
+var connectionLogger = (req, res, next) => { // Middleware Function!
     formatted_date = datetime("logging");
     let ip = req.ip;
     let method = req.method;
@@ -43,7 +45,15 @@ const getActualRequestDurationInMilliseconds = start => {
     const NS_TO_MS = 1e6; // convert to milliseconds
     const diff = process.hrtime(start);
     return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
-  };
+}
+
+var limiter = RateLimit({
+    // 5 requests per minute per IP
+    msWindow: 1*60*1000, // 1 minute?
+    max: 5
+})
+
+
 
 function logging(message, loglevel) {
     if (loggingReported === false) {
@@ -110,5 +120,6 @@ function datetime(format, tokenExpire) {
 module.exports = {
     logging,
     connectionLogger,
+    limiter,
     datetime
 }
