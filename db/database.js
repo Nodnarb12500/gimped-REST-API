@@ -62,7 +62,7 @@ function createRow(table, data) {
 function modifyRow(table, user, data) {
   // this should run anytime the user syncs their bookmarks
   // return knex(table).where("id", id).update(data);
-  return knex(table).where("id", id).update(data);
+  return knex(table).where("user", user).update(data);
 }
 
 function deleteRow(table, id) {
