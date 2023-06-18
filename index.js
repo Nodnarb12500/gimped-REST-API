@@ -24,8 +24,8 @@ app.use(bodyParser.json());
 // apperently unsafe(easily manipulated)
 app.set('trust proxy', config.trustProxy);
 
-app.use(logging.limiter);
 app.use(logging.connectionLogger);
+app.use(logging.limiter);
 
 /* Web Pages */
 app.use("/resources", express.static("./website/resources"));
