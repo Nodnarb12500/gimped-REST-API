@@ -28,6 +28,10 @@ app.post("/create/:table", async (req, res) => {
   const table = "userData";
   apiRequest = verification.stripToken(req.body);
 
+  // just noticed i didnt finish this yet lmao
+  // for how the server is currently set up lets assume database is limited
+  const dbLimit = true;
+
   if (validated === true) {
     if (dbLimit) {
       const exists = await db.getRow(table, apiRequest.username);
