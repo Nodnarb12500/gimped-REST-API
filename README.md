@@ -11,6 +11,7 @@ If I end up remove large sections of this program its because it became to big, 
         - express
         - knex
         - sqlite3
+        - express-rate-limit
 
 # Documentation
 
