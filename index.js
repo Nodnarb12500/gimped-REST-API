@@ -52,7 +52,6 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   logging.logging(`${req.ip} did a thing and caused ${err.stack}`, "ERROR");
-  console.log(err.stack);
 
   if (req.method == "POST") {
     res.status(500).json({"Error":"Server Sploded"});
