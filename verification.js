@@ -29,6 +29,16 @@ async function hashPassword(username, password) {
   })
 }
 
+async function verifyUser(password, hash) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, async (err, result) => {
+      logging.logging("Something Broke: " + err, "ERROR");
+      
+      resolve(result);
+    })
+  });
+}
+
 async function generateToken(user) {
   return new Promise(function(resolve, reject) {
     crypto.randomBytes(48, (err, buf) => {
@@ -104,6 +114,7 @@ function stripToken(userReq) {
 
 module.exports = {
     hashPassword,
+    verifyUser,
     generateToken,
     checkToken,
     stripToken

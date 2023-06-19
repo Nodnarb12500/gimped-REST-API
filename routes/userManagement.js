@@ -1,15 +1,13 @@
 const express = require("express");
 const app = express();
 
-const fs = require("node:fs");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-
-
 const db = require("../db/database");
 const verification = require("../verification");
 const logging = require("../logging");
 const config = require("../config");
+
+// this is to help determine the root folder
+const rootFolder = `${__dirname}/..`;
 
 /*
 This file is for managing user account creation logging in and generating and providing tokens
@@ -19,10 +17,10 @@ This file is for managing user account creation logging in and generating and pr
 app
 .get("/signup", async (req, res) => {
   if (config.signUpAllowed) {
-      res.status(200).sendFile('website/html/signup.html', {root: __dirname});
-    } else {
-      res.status(418).json({"Error":"Signup isnt allowed!"}); // cant find an error code that matches to we're a teapot
-    }
+    res.status(200).sendFile('/website/html/signup.html', {root: rootFolder});
+  } else {
+    res.status(418).json({"Error":"Signup isnt allowed!"}); // cant find an error code that matches to we're a teapot(401 or 403 would probly work)
+  }
 })
 
 .post("/signup", async (req, res) => {
@@ -45,7 +43,7 @@ app
 
     } else {
       verification.hashPassword(req.body.username, req.body.password).then(async userCreds => {        
-        const results = await db.createRow(table, userCreds);
+        const results = await db.createRow(table, userCreds); //doesnt need await lmao im not using the data generated from this
         res.status(201).json({"Success!":`User account ${req.body.username} created!`});
 
       });
@@ -62,7 +60,7 @@ app
 app
 .get("/verify", async (req,res) => {
   // this is a demo page for users to log in 
-  res.sendFile('website/html/login.html', {root: __dirname});
+  res.sendFile('website/html/login.html', {root: rootFolder});
 
 })
 
@@ -78,29 +76,20 @@ app
     }
   
     const userCreds = await db.getRow(table, req.body.username);
-    verifyUser(req.body.password, userCreds[0].password);
-  
-    function verifyUser(password, hash) {
-      bcrypt.compare(password, hash, async (err, result) => {
-        if (err) {
-          logging.logging("Something Broke: " + err, "ERROR");
-          res.status(500).send({"ERROR":"A server side error has occurred"});
-  
-        } else if (result) {
-          logging.logging("User logged in " + userCreds[0].username, "DEBUG");
+    verification.verifyUser(req.body.password, userCreds[0].password).then(async verifed => {
+      if (verifed) {
+        logging.logging("User logged in " + userCreds[0].username, "DEBUG");
   
           verification.generateToken(req.body.username).then(result => {
             res.status(200).json({"verKey" : result});
           });
-          
-        } else {
-          // somehow also get the req.ip here so we can learn of more bots // this might already "work"
-          logging.logging("Incorect Username/Password", "WARN");
-          // Send Errors back as JSON
-          res.status(401).json({"ERROR":"Incorect Username/Password"});
-        }
-      });
-    }
+      } else {
+        // somehow also get the req.ip here so we can learn of more bots // this might already "work"
+        logging.logging("Incorect Username/Password", "WARN");
+        // Send Errors back as JSON
+        res.status(401).json({"ERROR":"Incorect Username/Password"});
+      }
+    });
 });
 
 module.exports = app;
