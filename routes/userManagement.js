@@ -92,4 +92,26 @@ app
     });
 });
 
+/** This is how users might interact with the site i think?
+ * TODO:
+ *  - 
+ */
+
+app.get("/:table/upload", async (req, res) => {
+  /**
+   * This is where users will find their upload form.
+   * this form needs to send 2 post requests using fetch();
+   * one fetch goes to /api/create sending along the table 
+   */
+})
+
+.post("/:table/upload", async (req, res) => {
+  /**
+   * This is where the users upload form will send the files they might upload.
+   * any data like a title of a post and a message will be sent to the database.
+   * when this data is accessed the client will ask the server for the data and after the server provides that data
+   * the client will use the JSON to create DOM elements and create the page
+   */
+});
+
 module.exports = app;
