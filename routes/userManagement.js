@@ -72,10 +72,18 @@ app
   
     if (req.body.username == undefined) {
       res.status(200).json({"ERROR": "Send as URL encoded!"});
+      return; // stop executing!
       // needs to stop execution databases also need some error checking so they stop crashing the server
-    }
-  
+    } else if (req.body.password == undefined) {
+      res.status(200).json({"ERROR": "Password Undefined!"}); // this and the above shouldnt happen but incase it does these are required!
+      return;
+    } 
     const userCreds = await db.getRow(table, req.body.username);
+    if (userCreds[0] == undefined) {
+      res.status(200).json({"ERROR": "User doesnt exist!"});
+      return;
+    }
+    
     verification.verifyUser(req.body.password, userCreds[0].password).then(async verifed => {
       if (verifed) {
         logging.logging("User logged in " + userCreds[0].username, "DEBUG");
@@ -92,8 +100,9 @@ app
     });
 });
 
-/** This is how users might interact with the site i think?
+/** This is how users might interact with the site i think? This might get put in another file!
  * TODO:
+ *  - finish uploads
  *  - 
  */
 
