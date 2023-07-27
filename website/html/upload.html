@@ -4,6 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Upload</title>
+
+        <link rel="stylesheet" href="/resources/css/main.css">
+
+        <script src="/resources/js/verification.js"></script>
+
     </head>
 
     <!-- This file is for uploading data to the server -->
@@ -12,6 +17,35 @@
     <!-- both forms should be sent to the server via the fetch() function -->
 
 <body>
-    
+    <form id="uploadForm">
+
+        <label for="desc">Description: </label>
+        <input type="text" name="desc" id="desc">
+
+        <label for="fileName">fileName:</label>
+        <input type="text" name="fileName" id="fileName">
+
+        <label for="fileUpload">Upload: </label>
+        <input type="file" name="fileUpload" id="fileUpload">
+
+        <button type="submit" id="submitBtn">Submit</button>
+
+    </form>
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+        });
+
+        document.getElementById("submitBtn").addEventListener("click", (e) => {
+            e.preventDefault();
+            upload();
+        })
+
+        // auto populate the file name box
+        document.getElementById("fileUpload").addEventListener("change", (e) => {
+            e.preventDefault();
+        });
+    </script>
+
 </body>
 </html>
