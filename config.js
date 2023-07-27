@@ -14,7 +14,7 @@ const listenAddress = "localhost";
 const listenPort = 3000;
 
 // If your not behind a proxy you trust set this to false. default is true because thats how I use it
-const trustProxy = true;
+const trustProxy = false; // new dep or soon to be added dep complains about this
 
 // Currently this file is relative to index.js
 const databaseFile = "db/demo.sqlite3";
