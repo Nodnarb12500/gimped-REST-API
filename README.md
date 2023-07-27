@@ -33,12 +33,12 @@ This is a quick TODO thing that i havent added to Issues yet, ideas not fully th
 
 updates will be periodically sent here, I have a project that im interested in that requires this template so ill be adding and refining features as i continue.
 
-things this project should allow me to add to this template
+things this project should allow me to add to this template:
     - JSON + file uploads in one post request (issue #19)
     - search + storing functions (issue #14)
     - working pagination (issue #4)
 
-Not gurenteed but i do want to add
+Not gurenteed but i do want to add:
     - better database error checking (issue #6)
     - API Timeouts
     - log rotation
