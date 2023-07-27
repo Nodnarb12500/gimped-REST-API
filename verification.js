@@ -13,10 +13,10 @@ const logging = require("./logging");
 async function hashPassword(username, password) {
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(10, (err, salt) => {
-      if (err) {logging.logging(err, "ERROR");}
+      if (err) {logging.logging(err.stack, "ERROR");}
 
       bcrypt.hash(password, salt, async function(err, hash) {
-        if (err) {logging.logging(err, "ERROR");}
+        if (err) {logging.logging(err.stack, "ERROR");}
 
         result = {
           username: username,
@@ -32,7 +32,9 @@ async function hashPassword(username, password) {
 async function verifyUser(password, hash) {
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, hash, async (err, result) => {
-      logging.logging("Something Broke: " + err, "ERROR");
+      if (err) {
+        logging.logging("Something Broke: " + err, "ERROR");
+      }
       
       resolve(result);
     })
@@ -57,7 +59,7 @@ async function generateToken(user) {
         var tokenStream = fs.createWriteStream('tokens.json', {flags: 'a+'});
         tokenStream.write(JSON.stringify(result) + "\n");
         tokenStream.end();
-        resolve(token);
+        resolve(result);
       }
     });
   });
@@ -111,6 +113,7 @@ function stripToken(userReq) {
   return apiRequest;
 
 }
+
 
 module.exports = {
     hashPassword,
