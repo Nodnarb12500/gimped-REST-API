@@ -65,62 +65,71 @@ app
 })
 
 .post("/verify", async (req, res) => {
-    let table = "userAccounts";
-    // this is to varify the user somehow
-    // will this use another table? - that would be best if this is to be stored in the database.
-    // this will only be used to check credentials
-  
-    if (req.body.username == undefined) {
-      res.status(200).json({"ERROR": "Send as URL encoded!"});
-      return; // stop executing!
-      // needs to stop execution databases also need some error checking so they stop crashing the server
-    } else if (req.body.password == undefined) {
-      res.status(200).json({"ERROR": "Password Undefined!"}); // this and the above shouldnt happen but incase it does these are required!
-      return;
-    } 
-    const userCreds = await db.getRow(table, req.body.username);
-    if (userCreds[0] == undefined) {
-      res.status(200).json({"ERROR": "User doesnt exist!"});
-      return;
+  let table = "userAccounts";
+  // this is to varify the user somehow
+  // will this use another table? - that would be best if this is to be stored in the database.
+  // this will only be used to check credentials
+
+  /**
+   * MAKE SURE WE HAVE THE INFORMATION REQUIRED!
+   */
+
+  if (req.body.username == undefined) {
+    logging.logging("didnt not receive data!");
+    res.status(200).json({"ERROR": "Send as URL encoded!"});
+    return; // needs to stop execution databases also need some error checking so they stop crashing the server
+  } else if (req.body.password == undefined) {
+    logging.logging("didnt not receive password!");
+    res.status(200).json({"ERROR": "Password Undefined!"});
+    return;
+  } 
+  const userCreds = await db.getRow(table, req.body.username); // move this error check to the database file!
+  if (userCreds[0] == undefined) {
+    logging.logging("user doesnt exist!");
+    res.status(200).json({"ERROR": "User doesnt exist!"});
+    return;
+  }
+
+  /**
+   * USE THE AQUIRED DATA
+   */
+
+  verification.verifyUser(req.body.password, userCreds[0].password).then(async verifed => {
+    if (verifed) {
+      logging.logging("User logged in " + userCreds[0].username, "DEBUG");
+
+        verification.generateToken(req.body.username).then(result => {
+          res.status(200).json(result);
+        });
+    } else {
+      // somehow also get the req.ip here so we can learn of more bots // this might already "work"
+      logging.logging("Incorect Username/Password", "WARN");
+      // Send Errors back as JSON
+      res.status(401).json({"ERROR":"Incorect Username/Password"});
     }
-    
-    verification.verifyUser(req.body.password, userCreds[0].password).then(async verifed => {
-      if (verifed) {
-        logging.logging("User logged in " + userCreds[0].username, "DEBUG");
-  
-          verification.generateToken(req.body.username).then(result => {
-            res.status(200).json({"verKey" : result});
-          });
-      } else {
-        // somehow also get the req.ip here so we can learn of more bots // this might already "work"
-        logging.logging("Incorect Username/Password", "WARN");
-        // Send Errors back as JSON
-        res.status(401).json({"ERROR":"Incorect Username/Password"});
-      }
-    });
+  });
 });
 
-/** This is how users might interact with the site i think? This might get put in another file!
+/** This is how users might interact with the site i think?
  * TODO:
- *  - finish uploads
- *  - 
+ *  - api/upload will handle this for now Still exploring ideas
  */
 
-app.get("/:table/upload", async (req, res) => {
+// app.get("/:table/upload", async (req, res) => {
   /**
    * This is where users will find their upload form.
    * this form needs to send 2 post requests using fetch();
    * one fetch goes to /api/create sending along the table 
    */
-})
+// })
 
-.post("/:table/upload", async (req, res) => {
+// .post("/:table/upload", async (req, res) => {
   /**
    * This is where the users upload form will send the files they might upload.
    * any data like a title of a post and a message will be sent to the database.
    * when this data is accessed the client will ask the server for the data and after the server provides that data
    * the client will use the JSON to create DOM elements and create the page
    */
-});
+// });
 
 module.exports = app;
