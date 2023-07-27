@@ -80,6 +80,8 @@
 
         </style>
 
+        <script src="/resources/js/verification.js"></script>
+
         <!-- <script src="login.js"></script>  -->
 
     </head>
@@ -87,25 +89,40 @@
     <!-- slightly modified login form example from w3schools -->
 
     <body>
-
-        <form action="" method="post">
+        <form id="loginForm">
             <div class="container">
+                <h1>Login</h1>
+                <p>Please log in to your account</p>
+                <hr>
+
                 <label for="username">Username</label>
                 <input type="text" name="username" id="usernameBox" placeholder="Enter Username" autocomplete="username" required>
 
                 <label for="password">Password</label>
                 <input type="password" name="password" id="passwordBox" placeholder="Enter Password" autocomplete="current-password" required>
 
-                <button type="submit">Login</button>
+                <!-- These 2 buttons here need to be palced side-by-side to match the sign up page! -->
+                <button id="submitBtn" type="submit">Login</button>
+                <a href="/signup"><button type="button" id="signupBtn">Sign Up</button></a>
+                
+
+
                 <label>
                     <input type="checkbox" checked="checked" name="remember" id="rememberBtn"> Remember Me
                 </label>
-            </div>
-
-            <div class="container">
-                <button type="button" id="cancelBtn">Cancel</button>
                 <span class="psw">Forgot <a href="#">password?</a></span>
             </div>
         </form>
+
+        <script>
+            document.getElementById("loginForm").addEventListener("sumbit", (e) => {
+                e.preventDefault();
+
+            });
+            document.getElementById("submitBtn").addEventListener("click", (e) => {
+                e.preventDefault();
+                login();
+            })
+        </script>
     </body>
 </html>

@@ -44,7 +44,7 @@
                 opacity: 1;
             }
 
-            #cancelBtn, #signupBtn {
+            #cancelBtn, #submitBtn {
                 float: left;
                 width: 50%;
             }
@@ -60,7 +60,7 @@
             }
 
             @media screen and (max-width: 300px) {
-                #cancelBtn, #signupBtn {
+                #cancelBtn, #submitBtn {
                     width: 100%;
                 }   
             }
@@ -68,7 +68,7 @@
         </style>
 
 
-        <script src="resources/js/signup.js"></script>
+        <script src="resources/js/verification.js"></script>
 
     </head>
 
@@ -84,7 +84,7 @@
 
     <body class="center">
         <main>
-            <form action="" method="post">
+            <form id="signupForm">
                 <div id="container">
                     <h1>Signup</h1>
                     <p>Please fill out this form to create an account</p>
@@ -99,19 +99,31 @@
                     <label for="password2">Repeat Password</label>
                     <input type="password" name="password2" id="passwordBox2" placeholder="Repeat Password" autocomplete="new-password" required>
 
+                    <div id="ErrorCheck"></div>
+
+                    <div class="clearfix">
+                        <button type="submit" id="submitBtn">Sign Up</button>
+                        <button type="button" id="cancelBtn">Cancel</button>
+                    </div>
+
                     <label>
                         <input type="checkbox" checked="checked" name="remember" id="rememberBtn"> Remember Me
                     </label>
 
                     <p>By creating an account you agree to both our <a href="#" id="tosLink">Terms of Service</a> and <a href="#" id="privacyPolicy">Privacy Policy</a>.</p>
-
-                    <div class="clearfix">
-                        <button type="button" id="cancelBtn">Cancel</button>
-                        <button type="submit" id="signupBtn">Sign Up</button>
-                    </div>
-
                 </div> <!-- container div -->
             </form>
+
+            <script>
+                document.getElementById("signupForm").addEventListener("sumbit", (e) => {
+                    e.preventDefault();
+    
+                });
+                document.getElementById("submitBtn").addEventListener("click", (e) => {
+                    e.preventDefault();
+                    signup();
+                })
+            </script>
 
         </main>
     </body>

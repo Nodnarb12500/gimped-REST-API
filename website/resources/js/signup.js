@@ -1,6 +1,0 @@
-/* this page is for use with the sign up page.
-
-if for whatever reason your going to use this page directly this file adds error checking to the account creation based on a code sent back from the server
-
-
-*/
