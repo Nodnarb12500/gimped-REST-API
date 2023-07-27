@@ -2,6 +2,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
+// const {body, validationResult} = require("express-validator");
 
 // imported files
 const db = require("./db/database");
@@ -16,9 +17,10 @@ logging.logging("The server is starting", "INFO");
 db.checkTable("userAccounts");
 db.checkTable("userData");
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 
+app.use(express.json());
 
 // needed for obtaining user IPs for logging even behind a proxy
 // apperently unsafe(easily manipulated)
@@ -32,8 +34,8 @@ app.use("/resources", express.static("./website/resources"));
 app.set("/resources", express.static("./website/resources"));
 
 /* API Shit */
-app.use("/api", api);
 app.use("/", userManagement);
+app.use("/api", api);
 
 app.get("/", (req, res) => {
   res.sendFile('website/html/index.html', {root: __dirname});
