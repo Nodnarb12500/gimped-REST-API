@@ -37,18 +37,8 @@ const getActualRequestDurationInMilliseconds = start => {
 }
 
 var limiter = RateLimit({
-
-    /**
-     * TODO:
-     *  add these as settings to the config.js file
-     * 
-     */
-
-    // 10 requests per minute per IP
     msWindow: 1*60*1000, // 1 minute?
-    max: 10 // how meny requests are allowed in the specified time limit above
-    
-
+    max: 1000 // how meny requests are allowed in the specified time limit above
 });
 
 function logging(message, loglevel) {
