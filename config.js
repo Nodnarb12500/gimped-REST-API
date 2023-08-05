@@ -9,12 +9,13 @@ might be risky to have here.
 
 // this work as a hostname but this server doesnt care about what host name you use it should just work
 const listenAddress = "localhost";
+// const listenAddress = "192.168.1.145";
 
 // what port do you want to server to run on.
 const listenPort = 3000;
 
 // If your not behind a proxy you trust set this to false. default is true because thats how I use it
-const trustProxy = false; // new dep or soon to be added dep complains about this
+const trustProxy = false;
 
 // Currently this file is relative to index.js
 const databaseFile = "db/demo.sqlite3";
@@ -52,8 +53,6 @@ const logpath = "server.log";
 // actually this setting just doesnt do anything yet either
 const loglevel = "DEBUG";
 
-
-
 module.exports = {
     listenAddress,
     listenPort,
@@ -67,4 +66,3 @@ module.exports = {
     log2console,
     loglevel
 }
-
