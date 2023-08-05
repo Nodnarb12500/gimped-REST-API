@@ -5,9 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Upload</title>
 
-        <link rel="stylesheet" href="/resources/css/main.css">
+        <link rel="stylesheet" href="/resources/css/form.css">
 
         <script src="/resources/js/verification.js"></script>
+        <script src="/resources/js/upload.js"></script>
 
     </head>
 
@@ -16,36 +17,24 @@
     <!-- The forms on this page should not redirect untill another function determines that the uploads were successful or a failure -->
     <!-- both forms should be sent to the server via the fetch() function -->
 
-<body>
-    <form id="uploadForm">
+    <body class="center" onload="start();">
+        <form id="uploadForm">
+            <h1>Upload</h1>
+            <p>Please select a file to upload and maybe add a description for the file</p>
+            <hr>
 
-        <label for="desc">Description: </label>
-        <input type="text" name="desc" id="desc">
+            <label for="desc">Description:</label>
+            <input type="text" name="desc" id="desc" placeholder="this is optional">
 
-        <label for="fileName">fileName:</label>
-        <input type="text" name="fileName" id="fileName">
+            <label for="tag">Tag:</label>
+            <input type="text" name="tag" id="tagBox" value="" placeholder="What single tag best fits this media?">
 
-        <label for="fileUpload">Upload: </label>
-        <input type="file" name="fileUpload" id="fileUpload">
+            <label for="fileUpload">Upload: </label>
+            <input type="file" name="fileUpload" id="fileUpload">
 
-        <button type="submit" id="submitBtn">Submit</button>
+            <button type="submit" id="submitBtn">Submit</button>
 
-    </form>
-    <script>
-        document.getElementById("uploadForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-        });
+        </form>
 
-        document.getElementById("submitBtn").addEventListener("click", (e) => {
-            e.preventDefault();
-            upload();
-        })
-
-        // auto populate the file name box
-        document.getElementById("fileUpload").addEventListener("change", (e) => {
-            e.preventDefault();
-        });
-    </script>
-
-</body>
+    </body>
 </html>
