@@ -21,7 +21,6 @@ const rootFolder = `${__dirname}/..`;
  * 
  */
 
-
 // we are already in the /api path so /api should not be used here in the paths
 
 /* CREATING/MODIFYING DATA */
@@ -125,28 +124,6 @@ app
 
 .post("/search", (req, res) => {
 
-});
-
-/**
- * TODO:
- *  User Uploads
- *    - Uploads must accept
- *      - JSON
- *      - user Files
- *    - the files must be compressed.
- *    - the files must be placed in folders based on their upload date and filenames updated to reflect the perminite path for the files
- * 
- *
- */
-
-app.get("/upload", (req, res) => {
-  // res.status(200).sendFile("/website/html/upload.html", {root: rootFolder});
-  res.status(200).sendFile("website/html/upload.html", {root: rootFolder});
-})
-
-.post("/upload", (req, res) => {
-
-  console.log(req);
 });
 
 /* Token Test */
