@@ -6,67 +6,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-
-            input[type=text], input[type=password] {
-                width: 100%;
-                padding: 15px;
-                margin: 5px 0 22px 0;
-                display: inline-block;
-                border: none;
-                background: #f1f1f1;
-            }
-
-            input[type=text]:focus, input[type=password]:focus {
-                background-color: #ddd;
-                outline: none;
-            }
-
-            hr {
-                border: 1px solid #f1f1f1;
-                margin-bottom: 25px;
-            }
-
-            button {
-                background-color: #04aa6d;
-                color: white;
-                padding: 14px 20px;
-                margin: 8px 0;
-                border: none;
-                width: 100%;
-                opacity: 0.9;
-            }
-
-            button:hover {
-                opacity: 1;
-            }
-
-            #cancelBtn, #submitBtn {
-                float: left;
-                width: 50%;
-            }
-
-            .container {
-                padding: 16px;
-            }
-
-            .clearfix::after {
-                content: "";
-                clear: both;
-                display: table;
-            }
-
-            @media screen and (max-width: 300px) {
-                #cancelBtn, #submitBtn {
-                    width: 100%;
-                }   
-            }
-
-        </style>
-
+        <link rel="stylesheet" href="/resources/css/form.css">
 
         <script src="resources/js/verification.js"></script>
 
@@ -83,49 +23,46 @@
      -->
 
     <body class="center">
-        <main>
-            <form id="signupForm">
-                <div id="container">
-                    <h1>Signup</h1>
-                    <p>Please fill out this form to create an account</p>
-                    <hr>
+        <form id="signupForm">
+            <div class="container">
+                <h1>Signup</h1>
+                <p>Please fill out this form to create an account</p>
+                <hr>
 
-                    <label for="username">Username</label>
-                    <input type="text" name="username" id="usernameBox" placeholder="Enter Username" autocomplete="username" required>
+                <label for="username">Username</label>
+                <input type="text" name="username" id="usernameBox" placeholder="Enter Username" autocomplete="username" required>
 
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="passwordBox1" placeholder="Enter Password" autocomplete="new-password" required>
+                <label for="password">Password</label>
+                <input type="password" name="password" id="passwordBox1" placeholder="Enter Password" autocomplete="new-password" required>
 
-                    <label for="password2">Repeat Password</label>
-                    <input type="password" name="password2" id="passwordBox2" placeholder="Repeat Password" autocomplete="new-password" required>
+                <label for="password2">Repeat Password</label>
+                <input type="password" name="password2" id="passwordBox2" placeholder="Repeat Password" autocomplete="new-password" required>
 
-                    <div id="ErrorCheck"></div>
+                <div id="ErrorCheck"></div>
 
-                    <div class="clearfix">
-                        <button type="submit" id="submitBtn">Sign Up</button>
-                        <button type="button" id="cancelBtn">Cancel</button>
-                    </div>
+                <div class="clearfix">
+                    <button type="submit" id="submitBtn">Sign Up</button>
+                    <button type="button" id="cancelBtn">Cancel</button>
+                </div>
 
-                    <label>
-                        <input type="checkbox" checked="checked" name="remember" id="rememberBtn"> Remember Me
-                    </label>
+                <label>
+                    <input type="checkbox" checked="checked" name="remember" id="rememberBtn"> Remember Me
+                </label>
 
-                    <p>By creating an account you agree to both our <a href="#" id="tosLink">Terms of Service</a> and <a href="#" id="privacyPolicy">Privacy Policy</a>.</p>
-                </div> <!-- container div -->
-            </form>
+                <p>By creating an account you agree to both our <a href="#" id="tosLink">Terms of Service</a> and <a href="#" id="privacyPolicy">Privacy Policy</a>.</p>
+            </div> <!-- container div -->
+        </form>
 
-            <script>
-                document.getElementById("signupForm").addEventListener("sumbit", (e) => {
-                    e.preventDefault();
-    
-                });
-                document.getElementById("submitBtn").addEventListener("click", (e) => {
-                    e.preventDefault();
-                    signup();
-                })
-            </script>
+        <script>
+            document.getElementById("signupForm").addEventListener("sumbit", (e) => {
+                e.preventDefault();
 
-        </main>
+            });
+            document.getElementById("submitBtn").addEventListener("click", (e) => {
+                e.preventDefault();
+                signup();
+            })
+        </script>
+
     </body>
-
 </html>
