@@ -23,10 +23,21 @@ fs.stat(config.databaseFile, function(err, stat) {
   }
 });
 
+// const connectedKnex = knex({
+//   client: 'mysql',
+//   connection: {
+//     host : '127.0.0.1',
+//     port : 3306,
+//     user : 'your_database_user',
+//     password : 'your_database_password',
+//     database : 'myapp_test'
+//   }
+// });
+
 const connectedKnex = knex({
   client: "sqlite3",
   connection: {
-    filename: config.databaseFile
+    filename: config.databaseFile // filepath configure this in config.js
   },
   useNullAsDefault: true
 
