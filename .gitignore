@@ -134,3 +134,4 @@ dist
 package-lock.json
 db/*.sqlite3
 tokens.json
+website/resources/media
