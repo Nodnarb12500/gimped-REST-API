@@ -9,9 +9,7 @@ const config = require("../config");
 // this is to help determine the root folder
 const rootFolder = `${__dirname}/..`;
 
-/*
-This file is for managing user account creation logging in and generating and providing tokens
-*/
+/* This file is for managing user account creation logging in and generating and providing tokens */
 
 /* Signup Page */
 app
@@ -112,7 +110,7 @@ app
 
 /** This is how users might interact with the site i think?
  * TODO:
- *  - api/upload will handle this for now Still exploring ideas
+ *  - 
  */
 
 // app.get("/:table/upload", async (req, res) => {
