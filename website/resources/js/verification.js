@@ -104,12 +104,40 @@ async function signup() {
 }
 
 function cookieAutoFill() {
+    // this will switch to ocalstorage for storing usernames ONLY!
+
     let username = document.getElementById("usernameBox");
     let storedUsername = cookie.get("username");
 
     if (storedUsername) {
         username.value = storedUsername;
     }
+}
+
+function onloadAutofill() {
+    let usernameBox = document.getElementById("usernameBox");
+    let storedUsername = localStorage.get("username");
+
+    if (storedUsername) {
+        username.value = storedUsername;
+    }
+}
+
+const localStorage = { // are these page or domain specific?
+    set: (cname, cvalue) => {
+        console.log(`setting ${cname} as value ${cvalue} in local storage!`);
+
+    },
+    get: (cname) => {
+        console.log(`retreiving ${cname} from local storage!`);
+    },
+    delete: (cname) => {
+        console.log(`deleteing ${cname} from local storage!`);
+    },
+    clear: () => {
+        console.log(`clearing all localStorage!`);
+    }
+
 }
 
 const cookie = {
