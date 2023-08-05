@@ -106,11 +106,15 @@ async function checkToken(user, verKey) {
 
 function stripToken(userReq) {
   // this function is for removeing the verKey from the API request because it would crash the server if it got passed to the database
-  apiRequest = { // unfortunatly this is probly use case specific so change this to something else if you need something else
-    username: userReq.username,
-    data: userReq.data
-  }
-  return apiRequest;
+
+  delete userReq.verKey; // lmao is this all that was needed? 
+
+  // apiRequest = { // unfortunatly this is probly use case specific so change this to something else if you need something else
+  //   username: userReq.username,
+  //   data: userReq.data
+  // }
+
+  return userReq;
 
 }
 
