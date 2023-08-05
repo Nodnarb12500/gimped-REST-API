@@ -1,5 +1,4 @@
 // imported node stuff
-const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 // const {body, validationResult} = require("express-validator");
@@ -10,21 +9,21 @@ const config = require("./config");
 const logging = require("./logging");
 const api = require("./routes/api");
 const userManagement = require("./routes/userManagement");
+const uploads = require("./routes/upload");
+
 
 logging.logging("The server is starting", "INFO");
 
-// Create tables if they dont already exist
-db.checkTable("userAccounts");
-db.checkTable("userData");
-
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+// Make tables if they dont already exist!
+db.makeTable("userAccounts", ["username|string", "password|string"]);
+// db.makeTable("userData", ["username|string", "data|string"]); // you might want to remove this if you arent going to use it
+db.makeTable("content", ["desc|string", "tag|string", "filePath|string", "fileType|string", "uploader|string", "likes|integer", "comments|string"]);
 
 app.use(express.json());
 
 // needed for obtaining user IPs for logging even behind a proxy
 // apperently unsafe(easily manipulated)
-app.set('trust proxy', config.trustProxy);
+app.set('trust proxy', config.trustProxy); // defaulted to false for now
 
 app.use(logging.connectionLogger);
 app.use(logging.limiter);
@@ -35,6 +34,7 @@ app.set("/resources", express.static("./website/resources"));
 
 /* API Shit */
 app.use("/", userManagement);
+app.use("/", uploads);
 app.use("/api", api);
 
 app.get("/", (req, res) => {

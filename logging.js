@@ -1,7 +1,7 @@
-const fs = require('fs');
+const fs = require('node:fs');
+const rateLimit = require('express-rate-limit');
 const config = require('./config');
 
-const RateLimit = require('express-rate-limit');
 
 /* this file will generate logs for the server. */
 var loggingReported = false; // this is so we can yell at the user in the console for disabling logs
@@ -36,9 +36,10 @@ const getActualRequestDurationInMilliseconds = start => {
     return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
 }
 
-var limiter = RateLimit({
+var limiter = rateLimit({
+    // 10 requests per minute per IP
     msWindow: 1*60*1000, // 1 minute?
-    max: 1000 // how meny requests are allowed in the specified time limit above
+    max: 1000
 });
 
 function logging(message, loglevel) {
@@ -83,6 +84,9 @@ function logging(message, loglevel) {
 }
 
 function datetime(format, tokenExpire) {
+    // add a new format to create a folder for the current data
+    // mm-dd-yyyy? yyyy-mm-dd
+
     if (format == undefined) { format = "logging"; }
 
     let current_datetime = new Date();
@@ -99,6 +103,8 @@ function datetime(format, tokenExpire) {
         if (tokenExpire < current_datetime.getTime()) { result = false; } 
         else if (tokenExpire > current_datetime.getTime()) { result = true; }
 
+    } else if (format == "folderDate") {
+        return `${current_datetime.getFullYear()}-${(String(current_datetime.getMonth() + 1)).padStart(2, 0)}-${String(current_datetime.getDate()).padStart(2, 0)}`;
     } else { 
         console.log("Something unexpected happened in logging.js");
     }

@@ -1,43 +1,33 @@
 const knex = require("./knex");
 const logging = require("../logging");
 
+function makeTable(tName, cNames) {
+  // if (!cNames.isArray()) { console.log(`cNames isnt an array?\n${cNames}`); return; }
+  if (!cNames.constructor === Array) { console.log(`cNames isnt an array?\n${cNames}`); return; }
 
-function checkTable(tableName){
-  if (tableName == "userData") {
-    knex.schema.hasTable(tableName).then(function(exists) {
-      if (!exists) {
-        logging.logging("Creating Table " + tableName, "INFO");
-        return knex.schema.createTable(tableName, function(t) {
-          t.increments('id', { primaryKey: true });
-          t.string('username').notNullable();
-          t.string('data');
+  knex.schema.hasTable(tName).then((exists) => {
+    if (!exists) {
+      logging.logging(`Creating table ${tName} with ${cNames}`, "INFO");
+      return knex.schema.createTable(tName, (t) => {
+        t.increments('id').primary(); // autoincementing ID for all rows
+        cNames.forEach(element => {
+          let cName = element.split("|")[0]; let cType = element.split("|")[1];
+  
+          if (cType == "string") {
+            t.string(cName);
+          } else if (cType == "integer") {
+            t.integer(cName);
+          } else {
+            logging.logging(`malformed database thingy ${element}`, "INFO");
+            return; //hopfully this cancels creating the database
+          }
+          
         });
-      } else {
-        logging.logging("Table " + tableName + " Exists!", "INFO");
-      }
-    });
-  } else if (tableName == "userAccounts") {
-    knex.schema.hasTable(tableName).then(function(exists) {
-      if (!exists) {
-        // Why another table for passwords?
-        // the other table will be sent to the client everytime it asks.
-        // which would include everything in that requested row.
-
-        logging.logging("Creating Table " + tableName, "INFO");
-
-        return knex.schema.createTable(tableName, function(t) {
-          t.increments('id', { primaryKey: true });
-          t.string('username').notNullable();
-          t.string('password');
-          // t.string('salt'); // bcrypt doesnt need the salt stored separately!
-
-        });
-        
-      } else {
-        logging.logging("Table " + tableName + " Exists!", "INFO");
-      }
-    });
-  }
+      });
+    } else {
+      logging.logging(`Table ${tName} already exists! Skipping...`, "INFO");
+    }
+  });
 }
 
 /*
@@ -143,8 +133,18 @@ function searchDB(search, table, count, page, sortBy) {
 
 }
 
+
+function stripToken(apiRequest) {
+  // delete the verKey from the API request, this is a requirement for the old login system and is a backup for weird systems
+  // might get removed soon?
+
+  delete apiRequest.verKey;
+
+  return apiRequest;
+}
+
 module.exports = {
-  checkTable,
+  makeTable,
   createRow,
   modifyRow,
   deleteRow,
